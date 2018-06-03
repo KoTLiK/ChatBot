@@ -36,7 +36,6 @@ public class Client {
         LOGGER.log(Level.FINE, "Sent: [{}]", message);
     }
 
-    // TODO create package of raw data from socket, then truncate beginning of the package for one message
     public String receive() throws IOException {
         final ByteBuffer buffer = ByteBuffer.allocateDirect(BUFFER_SIZE);
 
