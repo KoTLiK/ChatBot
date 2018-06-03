@@ -1,16 +1,20 @@
 package kotlik.chatbot.client;
 
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
 import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.nio.ByteBuffer;
 import java.nio.channels.SocketChannel;
+import java.nio.charset.Charset;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
 
-public class Client {
+final public class Client {
     private final static Logger LOGGER = Logger.getLogger(Client.class.getName());
-    private final static int BUFFER_SIZE = 2048;
+    public final static int BUFFER_SIZE = 2048;
 
     private SocketChannel client;
     private final String hostname;
@@ -29,14 +33,20 @@ public class Client {
         return this;
     }
 
-    public void send(String message) throws IOException {
-        final ByteBuffer buffer = ByteBuffer.wrap(message.getBytes());
+    public Client stop() throws IOException {
+        client.close();
+        return this;
+    }
+
+    public void send(@NotNull final String message) throws IOException {
+        final ByteBuffer buffer = ByteBuffer.wrap(message.getBytes(Charset.forName("UTF-8")));
         while (buffer.hasRemaining()) {
             client.write(buffer);
         }
         LOGGER.log(Level.FINE, "Sent: [{}]", message);
     }
 
+    @Nullable
     public String receive() throws IOException {
         final ByteBuffer buffer = ByteBuffer.allocateDirect(BUFFER_SIZE);
 

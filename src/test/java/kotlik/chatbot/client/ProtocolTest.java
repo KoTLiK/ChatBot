@@ -13,7 +13,7 @@ public class ProtocolTest {
     @Before
     public void setup() {
         buffer = ByteBuffer.allocateDirect(1024);
-        buffer.put("Nam quis nulla. ".getBytes());
+        buffer.put("Nam quis nulla.".getBytes());
         buffer.flip();
     }
 
@@ -27,10 +27,11 @@ public class ProtocolTest {
         Assert.assertTrue(protocol.popMessage().isEmpty());
 
         bufferWithNewLines();
+        protocol.clear();
 
         Assert.assertTrue(protocol.checkAndAppend(buffer));
         Assert.assertTrue(protocol.isEmpty());
-        Assert.assertEquals("Nam quis nulla. Lorem ipsum dolor sit amet, consectetuer adipiscing elit.", protocol.popMessage());
+        Assert.assertEquals("Lorem ipsum dolor sit amet, consectetuer adipiscing elit.", protocol.popMessage());
         Assert.assertFalse(protocol.isEmpty());
         Assert.assertFalse(protocol.popMessage().isEmpty());
         Assert.assertTrue(protocol.isEmpty());
