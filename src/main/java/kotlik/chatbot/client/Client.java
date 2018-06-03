@@ -22,10 +22,11 @@ public class Client {
         this.port = port;
     }
 
-    public void start() throws IOException {
+    public Client start() throws IOException {
         final InetSocketAddress hostAddress = new InetSocketAddress(hostname, port);
         client = SocketChannel.open(hostAddress);
         LOGGER.log(Level.INFO, "Connected to [{}].", (hostname + ":" + Integer.toString(port)) );
+        return this;
     }
 
     public void send(String message) throws IOException {
