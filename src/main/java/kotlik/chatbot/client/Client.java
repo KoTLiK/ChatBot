@@ -4,7 +4,6 @@ import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.nio.ByteBuffer;
 import java.nio.channels.SocketChannel;
-import java.nio.charset.Charset;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -12,11 +11,11 @@ import java.util.logging.Logger;
 public class Client {
     private final static Logger LOGGER = Logger.getLogger(Client.class.getName());
     private final static int BUFFER_SIZE = 2048;
-    private final static Charset CHARSET = Charset.forName("UTF-8");
+
     private SocketChannel client;
     private final String hostname;
     private final int port;
-    private final Protocol protocol = new Protocol(CHARSET);
+    private final Protocol protocol = new Protocol();
 
     public Client(String hostname, int port) {
         this.hostname = hostname;
@@ -30,9 +29,10 @@ public class Client {
     }
 
     public void send(String message) throws IOException {
-        final ByteBuffer buffer = ByteBuffer.wrap(message.getBytes(CHARSET));
-        client.write(buffer);
-        buffer.clear();
+        final ByteBuffer buffer = ByteBuffer.wrap(message.getBytes());
+        while (buffer.hasRemaining()) {
+            client.write(buffer);
+        }
         LOGGER.log(Level.FINE, "Sent: [{}]", message);
     }
 
@@ -40,7 +40,7 @@ public class Client {
     public String receive() throws IOException {
         final ByteBuffer buffer = ByteBuffer.allocateDirect(BUFFER_SIZE);
 
-        if (protocol.empty()) {
+        if (protocol.isEmpty()) {
             int received;
             while (true) {
                 buffer.clear();
@@ -48,9 +48,9 @@ public class Client {
                 buffer.flip();
 
                 if (received < 0) {
-                    // TODO end-of-stream
+                    LOGGER.log(Level.INFO, "End of stream reached. Connection closed.");
                     return null;
-                } else if (protocol.checkAndAppend(buffer, received)) {
+                } else if (protocol.checkAndAppend(buffer)) {
                     break;
                 }
             }

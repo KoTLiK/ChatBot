@@ -1,32 +1,32 @@
 package kotlik.chatbot.client;
 
 import java.nio.ByteBuffer;
-import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
+import java.util.LinkedList;
 
 
 public class Protocol {
     private final static String DELIMITER = "\r\n";
     private final StringBuilder container = new StringBuilder();
-    private final Charset charset;
+    private final LinkedList<String> messages = new LinkedList<>();
 
-    public Protocol() {
-        this.charset = Charset.forName("UTF-8");
-    }
+    public Protocol() {}
 
-    public Protocol(Charset charset) {
-        this.charset = charset;
-    }
-
-    public boolean empty() {
-        return false;
+    public boolean isEmpty() {
+        return messages.isEmpty();
     }
 
     public String popMessage() {
-        return null;
+        int position;
+        while ((position = container.indexOf(DELIMITER)) != -1) {
+            messages.addLast(container.substring(0, position));
+            container.delete(0, position + 2);
+        }
+        return messages.isEmpty() ? "" : messages.pollFirst();
     }
 
-    public boolean checkAndAppend(ByteBuffer buffer, int received) {
-        container.append(new String(buffer.array(), 0, received, charset));
+    public boolean checkAndAppend(ByteBuffer buffer) {
+        container.append(StandardCharsets.UTF_8.decode(buffer).toString());
         return (container.indexOf(DELIMITER) != -1);
     }
 }
