@@ -35,6 +35,7 @@ final public class Client {
 
     public Client stop() throws IOException {
         client.close();
+        protocol.clear();
         LOGGER.log(Level.INFO, "Connection closed.");
         return this;
     }

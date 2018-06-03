@@ -2,6 +2,7 @@ package kotlik.chatbot.client;
 
 import kotlik.chatbot.parser.Message;
 import org.jetbrains.annotations.Contract;
+import org.jetbrains.annotations.NotNull;
 
 import java.nio.ByteBuffer;
 import java.nio.charset.StandardCharsets;
@@ -25,6 +26,7 @@ final public class Protocol {
         return messages.isEmpty();
     }
 
+    @NotNull
     public String popMessage() {
         int position;
         while ((position = container.indexOf(Message.DELIMITER)) != -1) {
