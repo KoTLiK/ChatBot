@@ -21,7 +21,7 @@ final public class Client {
     private final int port;
     private final Protocol protocol = new Protocol();
 
-    public Client(String hostname, int port) {
+    public Client(final String hostname, final int port) {
         this.hostname = hostname;
         this.port = port;
     }
@@ -35,6 +35,7 @@ final public class Client {
 
     public Client stop() throws IOException {
         client.close();
+        LOGGER.log(Level.INFO, "Connection closed.");
         return this;
     }
 
@@ -58,7 +59,7 @@ final public class Client {
                 buffer.flip();
 
                 if (received < 0) {
-                    LOGGER.log(Level.INFO, "End of stream reached. Connection closed.");
+                    LOGGER.log(Level.INFO, "End of stream reached.");
                     return null;
                 } else if (protocol.checkAndAppend(buffer)) {
                     break;

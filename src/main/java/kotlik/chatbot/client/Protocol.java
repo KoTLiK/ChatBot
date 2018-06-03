@@ -34,7 +34,7 @@ final public class Protocol {
         return messages.isEmpty() ? "" : messages.pollFirst();
     }
 
-    public boolean checkAndAppend(ByteBuffer buffer) {
+    public boolean checkAndAppend(final ByteBuffer buffer) {
         container.append(StandardCharsets.UTF_8.decode(buffer).toString());
         return (container.indexOf(Message.DELIMITER) != -1);
     }
