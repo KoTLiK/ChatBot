@@ -65,13 +65,12 @@ public class Message {
         Matcher matcher = regex.matcher(message);
         if (!matcher.find()) return new Message.Builder(Command.UNKNOWN).build();
 
-        Message.Builder builder = new Message.Builder();
-        builder.command(Command.fromString(matcher.group("CMD")))
-                .params(matcher.group("PARAMS"))
-                .tags(matcher.group("TAGS"))
-                .nick(matcher.group("NICK"))
-                .user(matcher.group("USER"))
-                .host(matcher.group("HOST"));
+        Message.Builder builder = new Builder(Command.fromString(matcher.group("CMD")))
+                  .params(matcher.group("PARAMS"))
+                  .tags(matcher.group("TAGS"))
+                  .nick(matcher.group("NICK"))
+                  .user(matcher.group("USER"))
+                  .host(matcher.group("HOST"));
 
         return builder.build();
     }
@@ -89,20 +88,13 @@ public class Message {
         private List<String> params;
         private String trailing;
 
-        public Builder() {}
-
         public Builder(Command command) {
             this.command = command;
         }
 
         public Builder(Command command, String params) {
             this.command = command;
-            // TODO process params and trailing
-        }
-
-        public Builder command(Command command) {
-            this.command = command;
-            return this;
+            this.params(params);
         }
 
         public Builder params(String params) {
