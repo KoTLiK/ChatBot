@@ -21,6 +21,7 @@ public enum Command {
     ROOMSTATE("ROOMSTATE"),
     USERNOTICE("USERNOTICE"),
     USERSTATE("USERSTATE"),
+    GLOBALUSERSTATE("GLOBALUSERSTATE"),
 
     UNKNOWN("UNKNOWN"),
 
@@ -53,8 +54,12 @@ public enum Command {
     }
 
     public static Command fromString(@NotNull final String cmd) {
-        if (Character.isDigit(cmd.charAt(0)))
-            return Command.valueOf("_" + cmd);
-        else return Command.valueOf(cmd);
+        try {
+            if (Character.isDigit(cmd.charAt(0)))
+                return Command.valueOf("_" + cmd);
+            else return Command.valueOf(cmd);
+        } catch (IllegalArgumentException e) {
+            return Command.UNKNOWN;
+        }
     }
 }
