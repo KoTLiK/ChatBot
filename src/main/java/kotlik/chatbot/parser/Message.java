@@ -22,7 +22,7 @@ public class Message {
     private List<String> params;
     private String trailing;
 
-    public Message(Message.Builder builder) {
+    private Message(@NotNull Message.Builder builder) {
         this.tags = builder.tags;
         this.command = builder.command;
         this.nick = builder.nick;
