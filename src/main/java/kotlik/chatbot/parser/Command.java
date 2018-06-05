@@ -22,6 +22,8 @@ public enum Command {
     USERNOTICE("USERNOTICE"),
     USERSTATE("USERSTATE"),
 
+    UNKNOWN("UNKNOWN"),
+
     /**
      * Numbered commands might be deleted later on.
      * They are only in responses, but one never knows.
@@ -42,13 +44,17 @@ public enum Command {
     private final String cmd;
 
     Command(@NotNull final String cmd) {
-        if (cmd.startsWith("5"))
-            this.cmd = "5XX";
-        else this.cmd = cmd;
+        this.cmd = cmd;
     }
 
     @Override
     public String toString() {
         return this.cmd;
+    }
+
+    public static Command fromString(@NotNull final String cmd) {
+        if (Character.isDigit(cmd.charAt(0)))
+            return Command.valueOf("_" + cmd);
+        else return Command.valueOf(cmd);
     }
 }
