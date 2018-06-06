@@ -54,12 +54,14 @@ public enum Command {
     }
 
     public static Command fromString(@NotNull final String cmd) {
+        Command command;
         try {
             if (Character.isDigit(cmd.charAt(0)))
-                return Command.valueOf("_" + cmd);
-            else return Command.valueOf(cmd);
+                command = Command.valueOf("_" + cmd);
+            else command = Command.valueOf(cmd);
         } catch (IllegalArgumentException e) {
             return Command.UNKNOWN;
         }
+        return command;
     }
 }
