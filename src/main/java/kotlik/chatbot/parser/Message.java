@@ -12,7 +12,7 @@ import java.util.regex.Pattern;
 public class Message {
     public final static String DELIMITER = "\r\n";
     private final static Logger LOGGER = Logger.getLogger(Message.class.getName());
-    private final static Pattern regex = Pattern.compile(Environment.getProperty("bot.message.regexp"));
+    private final static Pattern regex = Pattern.compile(Environment.get("bot.message.regexp"));
 
     private List<String> tags;
     private Command command;
