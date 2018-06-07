@@ -14,6 +14,8 @@ public class Environment {
     private static final String propertyFileName = "bot.properties";
     private static final Properties properties = getProperties(propertyFileName);
 
+    private final Properties liveProperties;
+
     public static Properties getProperties(final String filename) {
         Properties appProps = new Properties();
         try {
@@ -38,5 +40,13 @@ public class Environment {
 
     public static String getPropertyFromFile(final String filename, final String key) {
         return getProperty(getProperties(filename), key);
+    }
+
+    public Environment(final String filename) {
+        this.liveProperties = getProperties(filename);
+    }
+
+    public String getValue(final String key) {
+        return getProperty(this.liveProperties, key);
     }
 }
