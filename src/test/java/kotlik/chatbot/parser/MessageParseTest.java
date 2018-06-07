@@ -1,5 +1,6 @@
 package kotlik.chatbot.parser;
 
+import org.jetbrains.annotations.NotNull;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -16,6 +17,7 @@ public class MessageParseTest {
 
     public MessageParseTest() {}
 
+    @NotNull
     @Parameters
     public static Collection messages() {
         return Arrays.asList(new Object[][] {
@@ -52,7 +54,7 @@ public class MessageParseTest {
                          .params(" #dallas")
                          .build(), "@broadcaster-lang=en;r9k=0;slow=0;subs-only=0 :tmi.twitch.tv ROOMSTATE #dallas"},
                 {new Message.Builder(Command.UNKNOWN)
-                         .params("tmi.twitch.tv")
+                         .params(":tmi.twitch.tv")
                          .build(), "WHO :tmi.twitch.tv"}
         });
     }

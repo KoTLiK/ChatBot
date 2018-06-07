@@ -3,10 +3,13 @@ package kotlik.chatbot.parser;
 import kotlik.chatbot.utils.Environment;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.logging.Logger;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 
 public class Message {
@@ -80,7 +83,7 @@ public class Message {
     }
 
     public static class Builder {
-        private List<String> tags;
+        private List<String> tags = new ArrayList<>();
         private Command command;
         private String nick;
         private String user;
@@ -88,41 +91,45 @@ public class Message {
         private List<String> params;
         private String trailing;
 
-        public Builder(Command command) {
+        public Builder(final Command command) {
             this.command = command;
         }
 
-        public Builder(Command command, String params) {
+        public Builder(final Command command, final String params) {
             this.command = command;
             this.params(params);
         }
 
         public Builder params(String params) {
-            // TODO process params and trailing
+            if (params.contains(":")) {
+                String[] bigParams = params.split(":");
+                this.trailing = bigParams[1];
+                params = bigParams[0];
+            }
+
+            List<String> middles = Arrays.asList(params.split("\\s+"));
+            this.params = middles.stream().filter(middle -> middle.length() > 0).collect(Collectors.toList());
+
             return this;
         }
 
-        public Builder tags(List<String> tags) {
-            this.tags = tags;
+        public Builder tags(final String tags) {
+            if (tags != null)
+                this.tags = new ArrayList<>(Arrays.asList(tags.split("[; ]")));
             return this;
         }
 
-        public Builder tags(String tags) {
-            // TODO process tags
-            return this;
-        }
-
-        public Builder nick(String nick) {
+        public Builder nick(final String nick) {
             this.nick = nick;
             return this;
         }
 
-        public Builder user(String user) {
+        public Builder user(final String user) {
             this.user = user;
             return this;
         }
 
-        public Builder host(String host) {
+        public Builder host(final String host) {
             this.host = host;
             return this;
         }
