@@ -1,5 +1,6 @@
 package kotlik.chatbot.parser;
 
+import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 
 
@@ -48,6 +49,7 @@ public enum Command {
         this.cmd = cmd;
     }
 
+    @Contract(pure = true)
     @Override
     public String toString() {
         return this.cmd;
