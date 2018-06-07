@@ -102,9 +102,9 @@ public class Message {
 
         public Builder params(String params) {
             if (params.contains(":")) {
-                String[] bigParams = params.split(":");
-                this.trailing = bigParams[1];
-                params = bigParams[0];
+                final int index = params.indexOf(":");
+                this.trailing = params.substring(index + 1);
+                params = params.substring(0, index);
             }
 
             List<String> middles = Arrays.asList(params.split("\\s+"));

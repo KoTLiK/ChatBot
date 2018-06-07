@@ -26,8 +26,8 @@ public class MessageParseTest {
                          .build(), "PING :tmi.twitch.tv"},
                 {new Message.Builder(Command._001)
                          .nick("tmi.twitch.tv")
-                         .params(" <user> :Welcome, GLHF!")
-                         .build(), ":tmi.twitch.tv 001 <user> :Welcome, GLHF!"},
+                         .params(" <user> :Welcome, GLHF! Also some colon : maybe another : OK!")
+                         .build(), ":tmi.twitch.tv 001 <user> :Welcome, GLHF! Also some colon : maybe another : OK!"},
                 {new Message.Builder(Command.PRIVMSG)
                          .nick("<user>")
                          .user("<user>")
@@ -39,17 +39,17 @@ public class MessageParseTest {
                          .params(" * ACK :twitch.tv/membership")
                          .build(), ":tmi.twitch.tv CAP * ACK :twitch.tv/membership"},
                 {new Message.Builder(Command.NOTICE)
-                         .tags("@msg-id=<msg_id> ")
+                         .tags("msg-id=<msg_id> ")
                          .nick("tmi.twitch.tv")
                          .params(" #<channel> :<message>")
                          .build(), "@msg-id=<msg_id> :tmi.twitch.tv NOTICE #<channel> :<message>"},
                 {new Message.Builder(Command.CLEARCHAT)
-                         .tags("@ban-reason=Follow\\sthe\\srules ")
+                         .tags("ban-reason=Follow\\sthe\\srules ")
                          .nick("tmi.twitch.tv")
                          .params(" #dallas :ronni")
                          .build(), "@ban-reason=Follow\\sthe\\srules :tmi.twitch.tv CLEARCHAT #dallas :ronni"},
                 {new Message.Builder(Command.ROOMSTATE)
-                         .tags("@broadcaster-lang=en;r9k=0;slow=0;subs-only=0 ")
+                         .tags("broadcaster-lang=en;r9k=0;slow=0;subs-only=0 ")
                          .nick("tmi.twitch.tv")
                          .params(" #dallas")
                          .build(), "@broadcaster-lang=en;r9k=0;slow=0;subs-only=0 :tmi.twitch.tv ROOMSTATE #dallas"},
