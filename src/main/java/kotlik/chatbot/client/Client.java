@@ -26,18 +26,17 @@ final public class Client {
         this.port = port;
     }
 
-    public Client start() throws IOException {
+    public void start() throws IOException {
         final InetSocketAddress hostAddress = new InetSocketAddress(hostname, port);
         client = SocketChannel.open(hostAddress);
-        LOGGER.log(Level.INFO, "Connected to [{}].", (hostname + ":" + Integer.toString(port)) );
-        return this;
+        LOGGER.log(Level.INFO, "Connected to [{0}:{1}].", new Object[] {hostname, Integer.toString(port)});
     }
 
-    public Client stop() throws IOException {
+    public void stop() throws IOException {
+        // TODO maybe send a QUIT message ?
         client.close();
         protocol.clear();
         LOGGER.log(Level.INFO, "Connection closed.");
-        return this;
     }
 
     public void send(@NotNull final String message) throws IOException {

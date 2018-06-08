@@ -1,11 +1,15 @@
 package kotlik.chatbot.parser;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.ObjectWriter;
 import kotlik.chatbot.utils.Environment;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -63,6 +67,17 @@ public class Message {
         return trailing;
     }
 
+    @Override
+    public String toString() {
+        final ObjectWriter writer = new ObjectMapper().writer().withDefaultPrettyPrinter();
+        try {
+            return writer.writeValueAsString(this);
+        } catch (JsonProcessingException e) {
+            LOGGER.log(Level.WARNING, "Unable to serialize message!");
+            return "{\n\t\"error\": \"Message serialization failed!\"\n}\n";
+        }
+    }
+
     @NotNull
     public static Message parse(final String message) {
         Matcher matcher = regex.matcher(message);
@@ -79,7 +94,7 @@ public class Message {
     }
 
     public static String prepare(final Message message) {
-        return null;
+        return "";
     }
 
     public static class Builder {
@@ -110,6 +125,11 @@ public class Message {
             List<String> middles = Arrays.asList(params.split("\\s+"));
             this.params = middles.stream().filter(middle -> middle.length() > 0).collect(Collectors.toList());
 
+            return this;
+        }
+
+        public Builder trailing(final String trailing) {
+            this.trailing = trailing;
             return this;
         }
 
