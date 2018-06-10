@@ -45,7 +45,7 @@ final public class Client {
             while (buffer.hasRemaining()) {
                 client.write(buffer);
             }
-            LOGGER.log(Level.FINE, "Sent: [{}]", message);
+            LOGGER.log(Level.INFO, "Sent: [{0}]", message);
         }
     }
 
@@ -70,7 +70,7 @@ final public class Client {
         }
 
         final String message = protocol.popMessage();
-        LOGGER.log(Level.FINE, "Received: [{}]", message);
+        LOGGER.log(Level.INFO, "Received: [{0}]", message);
         return message;
     }
 }

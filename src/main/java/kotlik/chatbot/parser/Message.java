@@ -114,6 +114,10 @@ public class Message {
                         .param(message.getParams().get(0))
                         .trailing(true, message.getTrailing());
                 break;
+            case JOIN:
+                messageBuilder.command(message.getCommand())
+                        .param(message.getParams().get(0));
+                break;
             default:
                 return "";
         }

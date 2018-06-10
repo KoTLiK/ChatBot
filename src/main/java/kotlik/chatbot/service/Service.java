@@ -4,6 +4,7 @@ import kotlik.chatbot.client.Client;
 import kotlik.chatbot.parser.Command;
 import kotlik.chatbot.parser.Message;
 import kotlik.chatbot.utils.Environment;
+import org.jetbrains.annotations.NotNull;
 
 import java.io.IOException;
 import java.util.logging.Level;
@@ -36,30 +37,29 @@ public class Service implements Runnable {
                 client.send(Message.prepare(Message._nick(userEnvironment.getValue("user.client.username"))));
             }
 
-            /**
-             * Testing lines
-             */
-            final String nickname = userEnvironment.getValue("user.client.username");
-            client.send(Message.prepare(Message._nick(nickname)));
-            client.send("USER " + nickname + " " + nickname + " " + nickname + " :" + nickname + Message.DELIMITER);
-//            client.send(Message.prepare(Message._capabilities("twitch.tv/membership")));
-//            client.send(Message.prepare(Message._capabilities("twitch.tv/tags")));
-//            client.send(Message.prepare(Message._capabilities("twitch.tv/commands")));
+            client.send(Message.prepare(Message._capabilities("twitch.tv/membership")));
+            client.send(Message.prepare(Message._capabilities("twitch.tv/tags")));
+            client.send(Message.prepare(Message._capabilities("twitch.tv/commands")));
 
             client.send(Message.prepare(Message._join(userEnvironment.getValue("user.client.channel"))));
 
             Message message;
+            String rawMessage;
             while (!stop) {
-                message = Message.parse(client.receive());
+                rawMessage = client.receive();
+                if (rawMessage == null) {
+                    break;
+                }
+                message = Message.parse(rawMessage);
                 message = serve(message);
                 client.send(Message.prepare(message));
             }
 
             client.stop();
-            LOGGER.log(Level.INFO, "Service has been stopped.");
         } catch (IOException e) {
             e.printStackTrace();
         }
+        LOGGER.log(Level.INFO, "Service has been stopped.");
     }
 
     public void stop() {
@@ -67,7 +67,7 @@ public class Service implements Runnable {
     }
 
     // TODO serving method
-    private Message serve(Message message) {
+    private Message serve(@NotNull Message message) {
         switch (message.getCommand()) {
             case PING:
                 return new Message.Builder(Command.PONG).trailing(message.getTrailing()).build();
