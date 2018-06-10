@@ -14,8 +14,11 @@ public class Bot {
 
         Scanner input = new Scanner(System.in);
         while (input.hasNext()) {
-            if (input.nextLine().toLowerCase().equals("stop")) {
-                service.stop();
+            switch (input.nextLine().toLowerCase()) {
+                case "stop":
+                    service.stop();
+                    break;
+                default:
             }
         }
     }

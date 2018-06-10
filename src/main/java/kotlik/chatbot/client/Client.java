@@ -40,11 +40,13 @@ final public class Client {
     }
 
     public void send(@NotNull final String message) throws IOException {
-        final ByteBuffer buffer = ByteBuffer.wrap(message.getBytes(Charset.forName("UTF-8")));
-        while (buffer.hasRemaining()) {
-            client.write(buffer);
+        if (message.length() > 0) {
+            final ByteBuffer buffer = ByteBuffer.wrap(message.getBytes(Charset.forName("UTF-8")));
+            while (buffer.hasRemaining()) {
+                client.write(buffer);
+            }
+            LOGGER.log(Level.FINE, "Sent: [{}]", message);
         }
-        LOGGER.log(Level.FINE, "Sent: [{}]", message);
     }
 
     @Nullable

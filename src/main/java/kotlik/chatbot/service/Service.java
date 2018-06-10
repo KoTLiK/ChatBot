@@ -31,15 +31,28 @@ public class Service implements Runnable {
             LOGGER.log(Level.INFO, "Service is running.");
             client.start();
 
-            // TODO Log in
             if (authentication) {
-                client.send(Message.prepare(_pass()));
-                client.send(Message.prepare(_nick()));
+                client.send(Message.prepare(Message._pass(userEnvironment.getValue("user.client.oauth.token"))));
+                client.send(Message.prepare(Message._nick(userEnvironment.getValue("user.client.username"))));
             }
 
-            // TODO infinite loop
-            while (!stop) {
+            /**
+             * Testing lines
+             */
+            final String nickname = userEnvironment.getValue("user.client.username");
+            client.send(Message.prepare(Message._nick(nickname)));
+            client.send("USER " + nickname + " " + nickname + " " + nickname + " :" + nickname + Message.DELIMITER);
+//            client.send(Message.prepare(Message._capabilities("twitch.tv/membership")));
+//            client.send(Message.prepare(Message._capabilities("twitch.tv/tags")));
+//            client.send(Message.prepare(Message._capabilities("twitch.tv/commands")));
 
+            client.send(Message.prepare(Message._join(userEnvironment.getValue("user.client.channel"))));
+
+            Message message;
+            while (!stop) {
+                message = Message.parse(client.receive());
+                message = serve(message);
+                client.send(Message.prepare(message));
             }
 
             client.stop();
@@ -53,18 +66,13 @@ public class Service implements Runnable {
         this.stop = true;
     }
 
-    private Message _pass() {
-        return new Message.Builder(Command.PASS)
-                       .trailing(Environment.get("bot.client.oauth.prefix")
-                                 + userEnvironment.getValue("user.client.oauth.token"))
-                       .build();
-    }
-
-    private Message _nick() {
-        return new Message.Builder(Command.NICK)
-                       .trailing(userEnvironment.getValue("user.client.username"))
-                       .build();
-    }
-
     // TODO serving method
+    private Message serve(Message message) {
+        switch (message.getCommand()) {
+            case PING:
+                return new Message.Builder(Command.PONG).trailing(message.getTrailing()).build();
+            default:
+                return new Message.Builder(Command.UNKNOWN).build();
+        }
+    }
 }

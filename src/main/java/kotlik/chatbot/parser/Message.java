@@ -19,7 +19,7 @@ import java.util.stream.Collectors;
 public class Message {
     public final static String DELIMITER = "\r\n";
     private final static Logger LOGGER = Logger.getLogger(Message.class.getName());
-    private final static Pattern regex = Pattern.compile(Environment.get("bot.message.regexp"));
+    private final static Pattern REGEX = Pattern.compile(Environment.get("bot.message.regexp"));
 
     private List<String> tags;
     private Command command;
@@ -80,7 +80,7 @@ public class Message {
 
     @NotNull
     public static Message parse(final String message) {
-        Matcher matcher = regex.matcher(message);
+        Matcher matcher = REGEX.matcher(message);
         if (!matcher.find()) return new Message.Builder(Command.UNKNOWN).build();
 
         Message.Builder builder = new Builder(Command.fromString(matcher.group("CMD")))
@@ -93,8 +93,47 @@ public class Message {
         return builder.build();
     }
 
-    public static String prepare(final Message message) {
-        return "";
+    @NotNull
+    public static String prepare(@NotNull final Message message) {
+        final BuildString messageBuilder = new BuildString();
+        switch (message.getCommand()) {
+            case PONG:
+                messageBuilder.command(message.getCommand())
+                        .trailing(true, message.getTrailing());
+                break;
+            case PASS:
+                messageBuilder.command(message.getCommand())
+                        .trailing(false, message.getTrailing());
+                break;
+            case NICK:
+                messageBuilder.command(message.getCommand())
+                        .trailing(false, message.getTrailing());
+                break;
+            case CAP:
+                messageBuilder.command(message.getCommand())
+                        .param(message.getParams().get(0))
+                        .trailing(true, message.getTrailing());
+                break;
+            default:
+                return "";
+        }
+        return messageBuilder.toString() + DELIMITER;
+    }
+
+    public static Message _pass(final String token) {
+        return new Message.Builder(Command.PASS).trailing(Environment.get("bot.client.oauth.prefix") + token).build();
+    }
+
+    public static Message _nick(final String username) {
+        return new Message.Builder(Command.NICK).trailing(username).build();
+    }
+
+    public static Message _capabilities(final String capabilities) {
+        return new Message.Builder(Command.CAP).params("REQ").trailing(capabilities).build();
+    }
+
+    public static Message _join(final String channel) {
+        return new Message.Builder(Command.JOIN).params("#" + channel).build();
     }
 
     public static class Builder {
@@ -156,6 +195,36 @@ public class Message {
 
         public Message build() {
             return new Message(this);
+        }
+    }
+
+    public static class BuildString {
+        private final StringBuilder message = new StringBuilder();
+
+        public BuildString() {}
+
+        public BuildString command(final Command command) {
+            message.append(command);
+            return this;
+        }
+
+        public BuildString param(final String param) {
+            message.append(" ");
+            message.append(param);
+            return this;
+        }
+
+        public BuildString trailing(boolean colon, final String trailing) {
+            if (colon)
+                message.append(" :");
+            else message.append(" ");
+            message.append(trailing);
+            return this;
+        }
+
+        @Override
+        public String toString() {
+            return message.toString();
         }
     }
 }
