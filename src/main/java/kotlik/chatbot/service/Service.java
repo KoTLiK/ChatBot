@@ -15,45 +15,38 @@ public class Service implements Runnable {
     private final static Logger LOGGER = Logger.getLogger(Service.class.getName());
     private final Client client;
     private final Environment userEnvironment;
-    private final boolean authentication;
     private boolean stop = false;
 
-    public Service(boolean authentication) {
+    public Service() {
         this.client = new Client(Environment.get("bot.twitch.url"),
                 Integer.parseInt(Environment.get("bot.twitch.port")));
         this.userEnvironment = new Environment("user.properties");
-        this.authentication = authentication;
         LOGGER.log(Level.INFO, "Service is prepared.");
     }
 
     @Override
     public void run() {
+        LOGGER.log(Level.INFO, "Service is running.");
         try {
-            LOGGER.log(Level.INFO, "Service is running.");
             client.start();
 
-            if (authentication) {
-                client.send(Message.prepare(Message._pass(userEnvironment.getValue("user.client.oauth.token"))));
-                client.send(Message.prepare(Message._nick(userEnvironment.getValue("user.client.username"))));
-            }
+            // Login
+//            client.send(Message.prepare(Message._pass(userEnvironment.getValue("user.client.oauth.token"))));
+//            client.send(Message.prepare(Message._nick(userEnvironment.getValue("user.client.username"))));
 
-            client.send(Message.prepare(Message._capabilities("twitch.tv/membership")));
-            client.send(Message.prepare(Message._capabilities("twitch.tv/tags")));
-            client.send(Message.prepare(Message._capabilities("twitch.tv/commands")));
+            final String nickname = userEnvironment.getValue("user.client.username");
+            client.send(Message.prepare(Message._nick(nickname)));
+            client.send("USER " + nickname + " " + nickname + " " + nickname + " :" + nickname + Message.DELIMITER);
 
+            // Request Twitch capabilities
+//            client.send(Message.prepare(Message._capabilities("twitch.tv/membership")));
+//            client.send(Message.prepare(Message._capabilities("twitch.tv/tags")));
+//            client.send(Message.prepare(Message._capabilities("twitch.tv/commands")));
+
+            // Join channel
             client.send(Message.prepare(Message._join(userEnvironment.getValue("user.client.channel"))));
 
-            Message message;
-            String rawMessage;
-            while (!stop) {
-                rawMessage = client.receive();
-                if (rawMessage == null) {
-                    break;
-                }
-                message = Message.parse(rawMessage);
-                message = serve(message);
-                client.send(Message.prepare(message));
-            }
+            loop();
 
             client.stop();
         } catch (IOException e) {
@@ -64,6 +57,20 @@ public class Service implements Runnable {
 
     public void stop() {
         this.stop = true;
+    }
+
+    private void loop() throws IOException {
+        Message message;
+        String rawMessage;
+        while (!stop) {
+            rawMessage = client.receive();
+            if (rawMessage == null) {
+                break;
+            }
+            message = Message.parse(rawMessage);
+            message = serve(message);
+            client.send(Message.prepare(message));
+        }
     }
 
     // TODO serving method

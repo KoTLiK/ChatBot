@@ -10,7 +10,7 @@ import java.util.logging.Logger;
 public class Bot {
     private final static Logger LOGGER = Logger.getLogger(Bot.class.getName());
     public static void main(String[] args) {
-        final Service service = new Service(true);
+        final Service service = new Service();
         final Thread thread = new Thread(service);
 
         thread.start();
