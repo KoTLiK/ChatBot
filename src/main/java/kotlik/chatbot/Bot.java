@@ -41,7 +41,7 @@ public class Bot {
                 }
             }
         } catch (InterruptedException e) {
-            e.printStackTrace();
+            LOGGER.error(e.toString());
         }
     }
 }
