@@ -14,18 +14,18 @@ import java.io.IOException;
 public class Service implements Runnable {
     private final static Logger LOGGER = LoggerFactory.getLogger(Service.class);
     private final Client client;
-    private final Environment userEnvironment;
-    private boolean stop = false;
+    private boolean stop;
 
     public Service() {
         this.client = new Client(Environment.get("bot.twitch.url"),
                 Integer.parseInt(Environment.get("bot.twitch.port")));
-        this.userEnvironment = new Environment("user.properties");
         LOGGER.info("Service is prepared.");
     }
 
     @Override
     public void run() {
+        stop = false;
+        Environment userEnvironment = new Environment("user.properties");
         LOGGER.info("Service is running.");
         try {
             client.start();

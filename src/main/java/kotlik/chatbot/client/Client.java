@@ -47,7 +47,7 @@ final public class Client {
         while (buffer.hasRemaining()) {
             client.write(buffer);
         }
-        LOGGER.info(ParametricString.resolve("Sent: [{0}]", message));
+        LOGGER.info(message);
     }
 
     @Nullable
@@ -71,7 +71,7 @@ final public class Client {
         }
 
         final String message = protocol.popMessage();
-        LOGGER.info(ParametricString.resolve("Received: [{0}]", message));
+        LOGGER.info(message);
         return message;
     }
 }
