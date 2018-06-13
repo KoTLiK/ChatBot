@@ -5,14 +5,14 @@ import kotlik.chatbot.parser.Command;
 import kotlik.chatbot.parser.Message;
 import kotlik.chatbot.utils.Environment;
 import org.jetbrains.annotations.NotNull;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 
 public class Service implements Runnable {
-    private final static Logger LOGGER = Logger.getLogger(Service.class.getName());
+    private final static Logger LOGGER = LoggerFactory.getLogger(Service.class);
     private final Client client;
     private final Environment userEnvironment;
     private boolean stop = false;
@@ -21,12 +21,12 @@ public class Service implements Runnable {
         this.client = new Client(Environment.get("bot.twitch.url"),
                 Integer.parseInt(Environment.get("bot.twitch.port")));
         this.userEnvironment = new Environment("user.properties");
-        LOGGER.log(Level.INFO, "Service is prepared.");
+        LOGGER.info("Service is prepared.");
     }
 
     @Override
     public void run() {
-        LOGGER.log(Level.INFO, "Service is running.");
+        LOGGER.info("Service is running.");
         try {
             client.start();
 
@@ -52,7 +52,7 @@ public class Service implements Runnable {
         } catch (IOException e) {
             e.printStackTrace();
         }
-        LOGGER.log(Level.INFO, "Service has been stopped.");
+        LOGGER.info("Service has been stopped.");
     }
 
     public void stop() {

@@ -1,19 +1,20 @@
 package kotlik.chatbot.client;
 
+import kotlik.chatbot.utils.ParametricString;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.nio.ByteBuffer;
 import java.nio.channels.SocketChannel;
 import java.nio.charset.Charset;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 
 final public class Client {
-    private final static Logger LOGGER = Logger.getLogger(Client.class.getName());
+    private final static Logger LOGGER = LoggerFactory.getLogger(Client.class);
     public final static int BUFFER_SIZE = 2048;
 
     private SocketChannel client;
@@ -29,24 +30,24 @@ final public class Client {
     public void start() throws IOException {
         final InetSocketAddress hostAddress = new InetSocketAddress(hostname, port);
         client = SocketChannel.open(hostAddress);
-        LOGGER.log(Level.INFO, "Connected to [{0}:{1}].", new Object[] {hostname, Integer.toString(port)});
+        LOGGER.info(ParametricString.resolve("Connected to [{0}:{1}].",
+                                                new Object[]{ hostname, Integer.toString(port) }));
     }
 
     public void stop() throws IOException {
         // TODO maybe send a QUIT message ?
         client.close();
         protocol.clear();
-        LOGGER.log(Level.INFO, "Connection closed.");
+        LOGGER.info("Connection closed.");
     }
 
     public void send(@NotNull final String message) throws IOException {
-        if (message.length() > 0) {
-            final ByteBuffer buffer = ByteBuffer.wrap(message.getBytes(Charset.forName("UTF-8")));
-            while (buffer.hasRemaining()) {
-                client.write(buffer);
-            }
-            LOGGER.log(Level.INFO, "Sent: [{0}]", message);
+        if (message.length() == 0) return;
+        final ByteBuffer buffer = ByteBuffer.wrap(message.getBytes(Charset.forName("UTF-8")));
+        while (buffer.hasRemaining()) {
+            client.write(buffer);
         }
+        LOGGER.info(ParametricString.resolve("Sent: [{0}]", message));
     }
 
     @Nullable
@@ -61,7 +62,7 @@ final public class Client {
                 buffer.flip();
 
                 if (received < 0) {
-                    LOGGER.log(Level.INFO, "End of stream reached.");
+                    LOGGER.info("End of stream reached.");
                     return null;
                 } else if (protocol.checkAndAppend(buffer)) {
                     break;
@@ -70,7 +71,7 @@ final public class Client {
         }
 
         final String message = protocol.popMessage();
-        LOGGER.log(Level.INFO, "Received: [{0}]", message);
+        LOGGER.info(ParametricString.resolve("Received: [{0}]", message));
         return message;
     }
 }

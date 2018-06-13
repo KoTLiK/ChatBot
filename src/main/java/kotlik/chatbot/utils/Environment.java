@@ -2,15 +2,15 @@ package kotlik.chatbot.utils;
 
 import org.codehaus.plexus.util.StringUtils;
 import org.jetbrains.annotations.NotNull;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.util.Properties;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 
 public class Environment {
-    private final static Logger LOGGER = Logger.getLogger(Environment.class.getName());
+    private final static Logger LOGGER = LoggerFactory.getLogger(Environment.class.getName());
     private static final String propertyFileName = "bot.properties";
     private static final Properties properties = getProperties(propertyFileName);
 
@@ -21,7 +21,7 @@ public class Environment {
         try {
             appProps.load(Environment.class.getClassLoader().getResourceAsStream(filename));
         } catch (IOException e) {
-            LOGGER.log(Level.SEVERE, "Unable to load [" + filename + "] property file!");
+            LOGGER.error("Unable to load [" + filename + "] property file!");
             e.printStackTrace();
         }
         return appProps;

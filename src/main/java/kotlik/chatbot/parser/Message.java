@@ -5,12 +5,12 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectWriter;
 import kotlik.chatbot.utils.Environment;
 import org.jetbrains.annotations.NotNull;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
@@ -18,7 +18,7 @@ import java.util.stream.Collectors;
 
 public class Message {
     public final static String DELIMITER = "\r\n";
-    private final static Logger LOGGER = Logger.getLogger(Message.class.getName());
+    private final static Logger LOGGER = LoggerFactory.getLogger(Message.class);
     private final static Pattern REGEX = Pattern.compile(Environment.get("bot.message.regexp"));
 
     private List<String> tags;
@@ -73,7 +73,7 @@ public class Message {
         try {
             return writer.writeValueAsString(this);
         } catch (JsonProcessingException e) {
-            LOGGER.log(Level.WARNING, "Unable to serialize message!");
+            LOGGER.warn("Unable to serialize message!");
             return "{\n\t\"error\": \"Message serialization failed!\"\n}\n";
         }
     }
