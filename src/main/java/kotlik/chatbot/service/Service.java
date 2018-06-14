@@ -1,5 +1,6 @@
 package kotlik.chatbot.service;
 
+import kotlik.chatbot.Bot;
 import kotlik.chatbot.client.Client;
 import kotlik.chatbot.parser.Command;
 import kotlik.chatbot.parser.Message;
@@ -52,7 +53,7 @@ public class Service implements Runnable {
 
             client.stop();
         } catch (IOException e) {
-            LOGGER.error(e.toString());
+            LOGGER.error(Bot.exceptionToString(e));
         }
         LOGGER.info("Service has been stopped.");
     }

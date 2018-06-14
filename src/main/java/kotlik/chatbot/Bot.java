@@ -1,9 +1,12 @@
 package kotlik.chatbot;
 
 import kotlik.chatbot.service.Service;
+import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.PrintWriter;
+import java.io.StringWriter;
 import java.util.Scanner;
 
 
@@ -41,7 +44,14 @@ public class Bot {
                 }
             }
         } catch (InterruptedException e) {
-            LOGGER.error(e.toString());
+            LOGGER.error(exceptionToString(e));
         }
+    }
+
+    public static String exceptionToString(@NotNull Throwable e) {
+        StringWriter sw = new StringWriter();
+        PrintWriter pw = new PrintWriter(sw);
+        e.printStackTrace(pw);
+        return sw.toString();
     }
 }

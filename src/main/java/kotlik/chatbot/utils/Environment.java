@@ -11,8 +11,8 @@ import java.util.Properties;
 
 public class Environment {
     private final static Logger LOGGER = LoggerFactory.getLogger(Environment.class.getName());
-    private static final String propertyFileName = "bot.properties";
-    private static final Properties properties = getProperties(propertyFileName);
+    private final static String propertyFileName = "bot.properties";
+    private final static Properties properties = getProperties(propertyFileName);
 
     private final Properties liveProperties;
 
@@ -22,7 +22,6 @@ public class Environment {
             appProps.load(Environment.class.getClassLoader().getResourceAsStream(filename));
         } catch (IOException e) {
             LOGGER.error("Unable to load [" + filename + "] property file!");
-            e.printStackTrace();
         }
         return appProps;
     }
