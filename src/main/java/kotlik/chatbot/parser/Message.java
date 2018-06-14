@@ -97,6 +97,9 @@ public class Message {
 
     @Override
     public String toString() {
+        if (command.equals(Command.UNKNOWN))
+            return "";
+
         StringBuilder builder = new StringBuilder();
         builder.append(command);
 
