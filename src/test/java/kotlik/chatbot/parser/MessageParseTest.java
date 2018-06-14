@@ -21,41 +21,44 @@ public class MessageParseTest {
     @Parameters
     public static Collection messages() {
         return Arrays.asList(new Object[][] {
-                {new Message.Builder(Command.PING)
-                         .params(" :tmi.twitch.tv")
-                         .build(), "PING :tmi.twitch.tv"},
-                {new Message.Builder(Command._001)
-                         .nick("tmi.twitch.tv")
-                         .params(" <user> :Welcome, GLHF! Also some colon : maybe another : OK!")
-                         .build(), ":tmi.twitch.tv 001 <user> :Welcome, GLHF! Also some colon : maybe another : OK!"},
-                {new Message.Builder(Command.PRIVMSG)
-                         .nick("<user>")
-                         .user("<user>")
-                         .host("<user>.tmi.twitch.tv")
-                         .params(" #<channel> :This is a sample message")
-                         .build(), ":<user>!<user>@<user>.tmi.twitch.tv PRIVMSG #<channel> :This is a sample message"},
-                {new Message.Builder(Command.CAP)
-                         .nick("tmi.twitch.tv")
-                         .params(" * ACK :twitch.tv/membership")
-                         .build(), ":tmi.twitch.tv CAP * ACK :twitch.tv/membership"},
-                {new Message.Builder(Command.NOTICE)
-                         .tags("msg-id=<msg_id> ")
-                         .nick("tmi.twitch.tv")
-                         .params(" #<channel> :<message>")
-                         .build(), "@msg-id=<msg_id> :tmi.twitch.tv NOTICE #<channel> :<message>"},
-                {new Message.Builder(Command.CLEARCHAT)
-                         .tags("ban-reason=Follow\\sthe\\srules ")
-                         .nick("tmi.twitch.tv")
-                         .params(" #dallas :ronni")
-                         .build(), "@ban-reason=Follow\\sthe\\srules :tmi.twitch.tv CLEARCHAT #dallas :ronni"},
-                {new Message.Builder(Command.ROOMSTATE)
-                         .tags("broadcaster-lang=en;r9k=0;slow=0;subs-only=0 ")
-                         .nick("tmi.twitch.tv")
-                         .params(" #dallas")
-                         .build(), "@broadcaster-lang=en;r9k=0;slow=0;subs-only=0 :tmi.twitch.tv ROOMSTATE #dallas"},
-                {new Message.Builder(Command.UNKNOWN)
-                         .params(":tmi.twitch.tv")
-                         .build(), "WHO :tmi.twitch.tv"}
+                {MessageBuilder.build(Command.PING,
+                        " :tmi.twitch.tv"),
+                    "PING :tmi.twitch.tv"},
+                {MessageBuilder.build(Command._001,
+                        " <user> :Welcome, GLHF! Also some colon : maybe another : OK!",
+                        null,
+                        "tmi.twitch.tv"),
+                    ":tmi.twitch.tv 001 <user> :Welcome, GLHF! Also some colon : maybe another : OK!"},
+                {MessageBuilder.build(Command.PRIVMSG,
+                        " #<channel> :This is a sample message",
+                        null,
+                        "<user>",
+                        "<user>",
+                        "<user>.tmi.twitch.tv"),
+                    ":<user>!<user>@<user>.tmi.twitch.tv PRIVMSG #<channel> :This is a sample message"},
+                {MessageBuilder.build(Command.CAP,
+                        " * ACK :twitch.tv/membership",
+                        null,
+                        "tmi.twitch.tv"),
+                    ":tmi.twitch.tv CAP * ACK :twitch.tv/membership"},
+                {MessageBuilder.build(Command.NOTICE,
+                        " #<channel> :<message>",
+                        "msg-id=<msg_id> ",
+                        "tmi.twitch.tv"),
+                    "@msg-id=<msg_id> :tmi.twitch.tv NOTICE #<channel> :<message>"},
+                {MessageBuilder.build(Command.CLEARCHAT,
+                        " #dallas :ronni",
+                        "ban-reason=Follow\\sthe\\srules ",
+                        "tmi.twitch.tv"),
+                    "@ban-reason=Follow\\sthe\\srules :tmi.twitch.tv CLEARCHAT #dallas :ronni"},
+                {MessageBuilder.build(Command.ROOMSTATE,
+                        " #dallas",
+                        "broadcaster-lang=en;r9k=0;slow=0;subs-only=0 ",
+                        "tmi.twitch.tv"),
+                    "@broadcaster-lang=en;r9k=0;slow=0;subs-only=0 :tmi.twitch.tv ROOMSTATE #dallas"},
+                {MessageBuilder.build(Command.UNKNOWN,
+                        ":tmi.twitch.tv"),
+                    "WHO :tmi.twitch.tv"}
         });
     }
 

@@ -22,11 +22,7 @@ public class ParametricString {
     @Override
     public String toString() {
         for (Map.Entry<String, Object> entry : params.entrySet()) {
-            final String replace = "{" + entry.getKey() + "}";
-            final String replacement = entry.getValue().toString();
-            while (buffer.contains(replace)) {
-                buffer = buffer.replace(replace, replacement);
-            }
+            buffer = buffer.replace("{" + entry.getKey() + "}", entry.getValue().toString());
         }
         return buffer;
     }
