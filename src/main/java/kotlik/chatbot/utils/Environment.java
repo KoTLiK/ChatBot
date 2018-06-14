@@ -11,8 +11,8 @@ import java.util.Properties;
 
 public class Environment {
     private final static Logger LOGGER = LoggerFactory.getLogger(Environment.class.getName());
-    private final static String propertyFileName = "bot.properties";
-    private final static Properties properties = getProperties(propertyFileName);
+    private final static String PROPERTY_FILE_NAME = "bot.properties";
+    private final static Properties PROPERTIES = getProperties(PROPERTY_FILE_NAME);
 
     private final Properties liveProperties;
 
@@ -34,7 +34,7 @@ public class Environment {
     }
 
     public static String get(final String key) {
-        return getProperty(properties, key);
+        return getProperty(PROPERTIES, key);
     }
 
     public static String getPropertyFromFile(final String filename, final String key) {
