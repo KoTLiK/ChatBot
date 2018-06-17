@@ -39,7 +39,6 @@ final public class TcpClient implements Client {
 
     @Override
     public void stop() throws IOException {
-        // TODO maybe send a QUIT message ?
         client.close();
         protocol.clear();
         LOGGER.info("Connection closed.");
