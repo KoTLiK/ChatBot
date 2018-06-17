@@ -127,22 +127,22 @@ public class Message {
                                     matcher.group("HOST"));
     }
 
-    public static Message _pass(final String token) {
+    public static Message pass(final String token) {
         return MessageBuilder.build(Command.PASS, "")
                        .setTrailing(false, Environment.get("bot.client.oauth.prefix") + token);
     }
 
-    public static Message _nick(final String username) {
+    public static Message nick(final String username) {
         return MessageBuilder.build(Command.NICK, "")
                        .setTrailing(false, username);
     }
 
-    public static Message _capabilities(final String capabilities) {
+    public static Message capabilities(final String capabilities) {
         return MessageBuilder.build(Command.CAP, "REQ")
                        .setTrailing(capabilities);
     }
 
-    public static Message _join(final String channel) {
+    public static Message join(final String channel) {
         return MessageBuilder.build(Command.JOIN, "#" + channel);
     }
 }

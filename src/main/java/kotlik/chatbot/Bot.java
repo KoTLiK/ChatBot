@@ -1,6 +1,6 @@
 package kotlik.chatbot;
 
-import kotlik.chatbot.service.Service;
+import kotlik.chatbot.controller.MessageService;
 import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -13,7 +13,7 @@ import java.util.Scanner;
 public class Bot {
     private final static Logger LOGGER = LoggerFactory.getLogger(Bot.class);
     public static void main(String[] args) {
-        final Service service = new Service();
+        final MessageService service = new MessageService();
 
         Thread thread = new Thread(service);
         thread.start();

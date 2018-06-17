@@ -1,6 +1,8 @@
-package kotlik.chatbot.service;
+package kotlik.chatbot.controller;
 
 import kotlik.chatbot.Bot;
+import kotlik.chatbot.annotations.Commander;
+import kotlik.chatbot.annotations.TargetCommand;
 import kotlik.chatbot.client.Client;
 import kotlik.chatbot.parser.Command;
 import kotlik.chatbot.parser.Message;
@@ -11,17 +13,33 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
+import java.util.Map;
 
 
-public class Service implements Runnable {
-    private final static Logger LOGGER = LoggerFactory.getLogger(Service.class);
+public class MessageService implements Runnable {
+    private final static Logger LOGGER = LoggerFactory.getLogger(MessageService.class);
     private final Client client;
     private boolean stop;
+    private Map<Command, Method> commandMethods;
 
-    public Service() {
+    public MessageService() {
         this.client = new Client(Environment.get("bot.twitch.url"),
                 Integer.parseInt(Environment.get("bot.twitch.port")));
         LOGGER.info("Service is prepared.");
+    }
+
+    private void setup() {
+        Class<CommandController> commander = CommandController.class;
+        if (commander.isAnnotationPresent(Commander.class)) {
+            for (Method method : commander.getDeclaredMethods()) {
+                if (method.isAnnotationPresent(TargetCommand.class)) {
+                    TargetCommand annotatedCommand = method.getAnnotation(TargetCommand.class);
+                    commandMethods.put(annotatedCommand.value(), method);
+                }
+            }
+        } else throw new RuntimeException("Commander is not found.");
     }
 
     @Override
@@ -33,21 +51,21 @@ public class Service implements Runnable {
             client.start();
 /*
             // Login
-            client.send(Message._pass(userEnvironment.getValue("user.client.oauth.token")).toString());
-            client.send(Message._nick(userEnvironment.getValue("user.client.username")).toString());
+            client.send(Message.pass(userEnvironment.getValue("user.client.oauth.token")).toString());
+            client.send(Message.nick(userEnvironment.getValue("user.client.username")).toString());
 
             // Request Twitch capabilities
-            client.send(Message._capabilities("twitch.tv/membership").toString());
-            client.send(Message._capabilities("twitch.tv/tags").toString());
-            client.send(Message._capabilities("twitch.tv/commands").toString());
+            client.send(Message.capabilities("twitch.tv/membership").toString());
+            client.send(Message.capabilities("twitch.tv/tags").toString());
+            client.send(Message.capabilities("twitch.tv/commands").toString());
 */
 
             final String nickname = userEnvironment.getValue("user.client.username");
-            client.send(Message._nick(nickname).toString());
+            client.send(Message.nick(nickname).toString());
             client.send("USER " + nickname + " " + nickname + " " + nickname + " :" + nickname + Message.DELIMITER);
 
             // Join channel
-            client.send(Message._join(userEnvironment.getValue("user.client.channel")).toString());
+            client.send(Message.join(userEnvironment.getValue("user.client.channel")).toString());
 
             loop();
 
@@ -79,11 +97,10 @@ public class Service implements Runnable {
 
     // TODO serving method
     private Message serve(@NotNull Message message) {
-        switch (message.getCommand()) {
-            case PING:
-                return MessageBuilder.build(Command.PONG, "").setTrailing(message.getTrailing());
-            default:
-                return MessageBuilder.build(Command.UNKNOWN, "");
+        try {
+            return (Message) commandMethods.get(message.getCommand()).invoke(CommandController.class.newInstance(), message);
+        } catch (IllegalAccessException | InvocationTargetException | InstantiationException e) {
+            e.printStackTrace();
         }
     }
 }
