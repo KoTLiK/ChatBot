@@ -8,10 +8,10 @@ import org.slf4j.LoggerFactory;
 import java.io.IOException;
 
 
-public class MessageService extends RunnableService {
+final public class FreeMessageService extends RunnableService {
     private final static Logger LOGGER = LoggerFactory.getLogger(MessageService.class);
 
-    public MessageService() {
+    public FreeMessageService() {
         LOGGER.info("Service is prepared.");
     }
 
@@ -23,14 +23,9 @@ public class MessageService extends RunnableService {
         try {
             client.start();
 
-            // Login
-            client.send(Message.pass(userEnvironment.getValue("user.client.oauth.token")).toString());
-            client.send(Message.nick(userEnvironment.getValue("user.client.username")).toString());
-
-            // Request Twitch capabilities
-            client.send(Message.capabilities("twitch.tv/membership").toString());
-            client.send(Message.capabilities("twitch.tv/tags").toString());
-            client.send(Message.capabilities("twitch.tv/commands").toString());
+            final String nickname = userEnvironment.getValue("user.client.username");
+            client.send(Message.nick(nickname).toString());
+            client.send("USER " + nickname + " " + nickname + " " + nickname + " :" + nickname + Message.DELIMITER);
 
             // Join channel
             client.send(Message.join(userEnvironment.getValue("user.client.channel")).toString());
@@ -44,3 +39,4 @@ public class MessageService extends RunnableService {
         LOGGER.info("Service has been stopped.");
     }
 }
+

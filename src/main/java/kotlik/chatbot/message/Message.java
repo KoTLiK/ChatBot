@@ -1,4 +1,4 @@
-package kotlik.chatbot.parser;
+package kotlik.chatbot.message;
 
 import kotlik.chatbot.utils.Environment;
 import org.jetbrains.annotations.NotNull;
@@ -100,7 +100,7 @@ public class Message {
         if (command.equals(Command.UNKNOWN))
             return "";
 
-        StringBuilder builder = new StringBuilder();
+        final StringBuilder builder = new StringBuilder();
         builder.append(command);
 
         for (String param : params)

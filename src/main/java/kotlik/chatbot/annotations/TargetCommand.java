@@ -1,6 +1,6 @@
 package kotlik.chatbot.annotations;
 
-import kotlik.chatbot.parser.Command;
+import kotlik.chatbot.message.Command;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;

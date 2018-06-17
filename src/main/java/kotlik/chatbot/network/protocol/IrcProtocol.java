@@ -1,6 +1,6 @@
-package kotlik.chatbot.client;
+package kotlik.chatbot.network.protocol;
 
-import kotlik.chatbot.parser.Message;
+import kotlik.chatbot.message.Message;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 
@@ -9,24 +9,27 @@ import java.nio.charset.StandardCharsets;
 import java.util.LinkedList;
 
 
-final public class Protocol {
+final public class IrcProtocol implements Protocol {
     private final StringBuilder container = new StringBuilder();
     private final LinkedList<String> messages = new LinkedList<>();
 
-    public Protocol() {}
+    public IrcProtocol() {}
 
-    public Protocol clear() {
+    @Override
+    public IrcProtocol clear() {
         container.setLength(0);
         messages.clear();
         return this;
     }
 
     @Contract(pure = true)
+    @Override
     public boolean isEmpty() {
         return messages.isEmpty();
     }
 
     @NotNull
+    @Override
     public String popMessage() {
         int position;
         while ((position = container.indexOf(Message.DELIMITER)) != -1) {
@@ -36,6 +39,7 @@ final public class Protocol {
         return messages.isEmpty() ? "" : messages.pollFirst();
     }
 
+    @Override
     public boolean checkAndAppend(final ByteBuffer buffer) {
         container.append(StandardCharsets.UTF_8.decode(buffer).toString());
         return (container.indexOf(Message.DELIMITER) != -1);

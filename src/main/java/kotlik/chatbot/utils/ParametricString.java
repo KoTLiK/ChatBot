@@ -28,7 +28,7 @@ public class ParametricString {
     }
 
     public static String resolve(String msg, @NotNull Object param) {
-        Object params[] = { param };
+        final Object params[] = { param };
         return resolve(msg, params);
     }
 

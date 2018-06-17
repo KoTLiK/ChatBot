@@ -1,5 +1,7 @@
-package kotlik.chatbot.client;
+package kotlik.chatbot.network;
 
+import kotlik.chatbot.network.protocol.IrcProtocol;
+import kotlik.chatbot.network.protocol.Protocol;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -19,7 +21,7 @@ public class ProtocolTest {
 
     @Test
     public void protocolReceive() {
-        final Protocol protocol = new Protocol();
+        final Protocol protocol = new IrcProtocol();
 
         Assert.assertTrue(protocol.isEmpty());
         Assert.assertTrue(protocol.popMessage().isEmpty());

@@ -26,7 +26,7 @@ public class Environment {
         return appProps;
     }
 
-    public static String getProperty(@NotNull Properties properties, final String key) {
+    public static String getProperty(@NotNull final Properties properties, final String key) {
         String property = properties.getProperty(key);
         if (StringUtils.isEmpty(property))
             throw new IllegalArgumentException("Property ["+ key +"] has not been found!");

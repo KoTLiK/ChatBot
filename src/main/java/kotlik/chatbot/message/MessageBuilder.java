@@ -1,4 +1,4 @@
-package kotlik.chatbot.parser;
+package kotlik.chatbot.message;
 
 import org.jetbrains.annotations.NotNull;
 

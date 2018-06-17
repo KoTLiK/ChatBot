@@ -1,24 +1,22 @@
 package kotlik.chatbot;
 
-import kotlik.chatbot.controller.MessageService;
-import org.jetbrains.annotations.NotNull;
+import kotlik.chatbot.controller.FreeMessageService;
+import kotlik.chatbot.controller.RunnableService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.PrintWriter;
-import java.io.StringWriter;
 import java.util.Scanner;
 
 
 public class Bot {
     private final static Logger LOGGER = LoggerFactory.getLogger(Bot.class);
     public static void main(String[] args) {
-        final MessageService service = new MessageService();
+        final RunnableService service = new FreeMessageService();
 
         Thread thread = new Thread(service);
         thread.start();
 
-        Scanner input = new Scanner(System.in);
+        final Scanner input = new Scanner(System.in);
         String inputText;
         try {
             while (input.hasNext()) {
@@ -46,12 +44,5 @@ public class Bot {
         } catch (InterruptedException e) {
             LOGGER.error("Service thread problem!", e);
         }
-    }
-
-    public static String exceptionToString(@NotNull Throwable e) {
-        StringWriter sw = new StringWriter();
-        PrintWriter pw = new PrintWriter(sw);
-        e.printStackTrace(pw);
-        return sw.toString();
     }
 }
