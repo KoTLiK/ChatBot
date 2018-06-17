@@ -46,8 +46,9 @@ public abstract class RunnableService implements Service {
     }
 
     @Override
-    public void stop() {
+    public void stop() throws IOException {
         this.stop = true;
+        client.send(MessageBuilder.build(Command.QUIT, ":I am shutting down, bye!").toString());
     }
 
     protected void loop() throws IOException {
