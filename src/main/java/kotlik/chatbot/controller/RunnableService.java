@@ -19,7 +19,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 
-public abstract class RunnableService implements Runnable {
+public abstract class RunnableService implements Service {
     private final static Logger LOGGER = LoggerFactory.getLogger(RunnableService.class);
     protected final Client client;
     protected boolean stop;
@@ -45,6 +45,7 @@ public abstract class RunnableService implements Runnable {
         LOGGER.info("Initialization finished.");
     }
 
+    @Override
     public void stop() {
         this.stop = true;
     }
