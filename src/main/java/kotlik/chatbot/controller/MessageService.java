@@ -1,6 +1,5 @@
 package kotlik.chatbot.controller;
 
-import kotlik.chatbot.Bot;
 import kotlik.chatbot.annotations.Commander;
 import kotlik.chatbot.annotations.TargetCommand;
 import kotlik.chatbot.client.Client;
@@ -15,6 +14,7 @@ import org.slf4j.LoggerFactory;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.util.HashMap;
 import java.util.Map;
 
 
@@ -22,15 +22,18 @@ public class MessageService implements Runnable {
     private final static Logger LOGGER = LoggerFactory.getLogger(MessageService.class);
     private final Client client;
     private boolean stop;
-    private Map<Command, Method> commandMethods;
+    private Map<Command, Method> commandMethods = new HashMap<>();
 
     public MessageService() {
         this.client = new Client(Environment.get("bot.twitch.url"),
                 Integer.parseInt(Environment.get("bot.twitch.port")));
+
+        initialization();
+
         LOGGER.info("Service is prepared.");
     }
 
-    private void setup() {
+    private void initialization() {
         Class<CommandController> commander = CommandController.class;
         if (commander.isAnnotationPresent(Commander.class)) {
             for (Method method : commander.getDeclaredMethods()) {
@@ -71,7 +74,7 @@ public class MessageService implements Runnable {
 
             client.stop();
         } catch (IOException e) {
-            LOGGER.error(Bot.exceptionToString(e));
+            LOGGER.error("Network IO error!", e);
         }
         LOGGER.info("Service has been stopped.");
     }
@@ -97,10 +100,14 @@ public class MessageService implements Runnable {
 
     // TODO serving method
     private Message serve(@NotNull Message message) {
+        Object response = MessageBuilder.build(Command.UNKNOWN, "");
         try {
-            return (Message) commandMethods.get(message.getCommand()).invoke(CommandController.class.newInstance(), message);
+            final Method method = commandMethods.get(message.getCommand());
+            if (method != null)
+                response = method.invoke(CommandController.class.newInstance(), message);
         } catch (IllegalAccessException | InvocationTargetException | InstantiationException e) {
-            e.printStackTrace();
+            LOGGER.warn("Command invocation error!", e);
         }
+        return (Message) response;
     }
 }

@@ -44,7 +44,7 @@ public class Bot {
                 }
             }
         } catch (InterruptedException e) {
-            LOGGER.error(exceptionToString(e));
+            LOGGER.error("Service thread problem!", e);
         }
     }
 

@@ -15,7 +15,7 @@ public class CommandController {
         return MessageBuilder.build(Command.UNKNOWN, "");
     }
 
-    @TargetCommand(Command.PONG)
+    @TargetCommand(Command.PING)
     public Message ping(Message message) {
         return MessageBuilder.build(Command.PONG, "").setTrailing(message.getTrailing());
     }
