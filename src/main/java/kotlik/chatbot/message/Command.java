@@ -1,6 +1,5 @@
 package kotlik.chatbot.message;
 
-import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 
 public enum Command {
