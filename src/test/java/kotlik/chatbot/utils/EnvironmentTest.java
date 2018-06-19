@@ -3,7 +3,6 @@ package kotlik.chatbot.utils;
 import org.junit.Assert;
 import org.junit.Test;
 
-
 public class EnvironmentTest {
 
     private final static String PROPERTY_FILE_NAME = "test.properties";

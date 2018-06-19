@@ -8,7 +8,6 @@ import org.junit.Test;
 
 import java.nio.ByteBuffer;
 
-
 public class ProtocolTest {
     private ByteBuffer buffer;
 
