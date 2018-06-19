@@ -11,8 +11,7 @@ public class ParametricStringTest {
     public void resolveParametricStringTest() {
         final String resultSingle = ParametricString.resolve(ENV.getValue("param.string.resolve.single"), "GLHF");
         final String resultMultiple = ParametricString.resolve(ENV.getValue("param.string.resolve.multiple"), "_");
-        final String resultDifferent = ParametricString.resolve(ENV.getValue("param.string.resolve.different"),
-                                                                new Object[]{ "_", "-" });
+        final String resultDifferent = ParametricString.resolve(ENV.getValue("param.string.resolve.different"), "_", "-");
 
         Assert.assertEquals(ENV.getValue("param.string.resolved.single"), resultSingle);
         Assert.assertEquals(ENV.getValue("param.string.resolved.multiple"), resultMultiple);
