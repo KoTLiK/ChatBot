@@ -1,13 +1,12 @@
 package kotlik.chatbot.controller;
 
-import kotlik.chatbot.message.Message;
 import kotlik.chatbot.message.MessageBuilder;
+import kotlik.chatbot.message.MessageFormatter;
 import kotlik.chatbot.utils.Environment;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
-
 
 public class MessageService extends RunnableService {
     private final static Logger LOGGER = LoggerFactory.getLogger(MessageService.class);
@@ -25,16 +24,16 @@ public class MessageService extends RunnableService {
             client.start();
 
             // Login
-            client.send(MessageBuilder.pass(userEnvironment.getValue("user.client.oauth.token")).toString());
-            client.send(MessageBuilder.nick(userEnvironment.getValue("user.client.username")).toString());
+            client.send(MessageFormatter.format(MessageBuilder.pass(userEnvironment.getValue("user.client.oauth.token"))));
+            client.send(MessageFormatter.format(MessageBuilder.nick(userEnvironment.getValue("user.client.username"))));
 
             // Request Twitch capabilities
-            client.send(MessageBuilder.capabilities("twitch.tv/membership").toString());
-            client.send(MessageBuilder.capabilities("twitch.tv/tags").toString());
-            client.send(MessageBuilder.capabilities("twitch.tv/commands").toString());
+            client.send(MessageFormatter.format(MessageBuilder.capabilities("twitch.tv/membership")));
+            client.send(MessageFormatter.format(MessageBuilder.capabilities("twitch.tv/tags")));
+            client.send(MessageFormatter.format(MessageBuilder.capabilities("twitch.tv/commands")));
 
             // Join channel
-            client.send(MessageBuilder.join(userEnvironment.getValue("user.client.channel")).toString());
+            client.send(MessageFormatter.format(MessageBuilder.join(userEnvironment.getValue("user.client.channel"))));
 
             loop();
 

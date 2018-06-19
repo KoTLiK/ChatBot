@@ -14,7 +14,6 @@ import java.nio.ByteBuffer;
 import java.nio.channels.SocketChannel;
 import java.nio.charset.Charset;
 
-
 final public class TcpClient implements Client {
     private final static Logger LOGGER = LoggerFactory.getLogger(TcpClient.class);
     public final static int BUFFER_SIZE = 2048;
@@ -33,8 +32,7 @@ final public class TcpClient implements Client {
     public void start() throws IOException {
         final InetSocketAddress hostAddress = new InetSocketAddress(hostname, port);
         client = SocketChannel.open(hostAddress);
-        LOGGER.info(ParametricString.resolve("Connected to [{0}:{1}].",
-                                                new Object[]{ hostname, Integer.toString(port) }));
+        LOGGER.info(ParametricString.resolve("Connected to [{0}:{1}].", hostname, Integer.toString(port)));
     }
 
     @Override

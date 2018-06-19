@@ -2,12 +2,12 @@ package kotlik.chatbot.controller;
 
 import kotlik.chatbot.message.Message;
 import kotlik.chatbot.message.MessageBuilder;
+import kotlik.chatbot.message.MessageFormatter;
 import kotlik.chatbot.utils.Environment;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
-
 
 final public class FreeMessageService extends RunnableService {
     private final static Logger LOGGER = LoggerFactory.getLogger(MessageService.class);
@@ -25,11 +25,11 @@ final public class FreeMessageService extends RunnableService {
             client.start();
 
             final String nickname = userEnvironment.getValue("user.client.username");
-            client.send(MessageBuilder.nick(nickname).toString());
+            client.send(MessageFormatter.format(MessageBuilder.nick(nickname)));
             client.send("USER " + nickname + " " + nickname + " " + nickname + " :" + nickname + Message.DELIMITER);
 
             // Join channel
-            client.send(MessageBuilder.join(userEnvironment.getValue("user.client.channel")).toString());
+            client.send(MessageFormatter.format(MessageBuilder.join(userEnvironment.getValue("user.client.channel"))));
 
             loop();
 

@@ -5,6 +5,7 @@ import kotlik.chatbot.annotations.TargetCommand;
 import kotlik.chatbot.message.Command;
 import kotlik.chatbot.message.Message;
 import kotlik.chatbot.message.MessageBuilder;
+import kotlik.chatbot.message.MessageFormatter;
 import kotlik.chatbot.network.client.Client;
 import kotlik.chatbot.network.client.TcpClient;
 import kotlik.chatbot.utils.Environment;
@@ -17,7 +18,6 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.HashMap;
 import java.util.Map;
-
 
 public abstract class RunnableService implements Service {
     private final static Logger LOGGER = LoggerFactory.getLogger(RunnableService.class);
@@ -48,10 +48,10 @@ public abstract class RunnableService implements Service {
     @Override
     public void stop() throws IOException {
         this.stop = true;
-        client.send(MessageBuilder.command(Command.QUIT)
-                .withTrailing("I am shutting down, bye!")
-                .build()
-                .toString()
+        client.send(MessageFormatter.format(MessageBuilder.command(Command.QUIT)
+                        .withTrailing("I am shutting down, bye!")
+                        .build()
+                )
         );
     }
 
@@ -66,7 +66,7 @@ public abstract class RunnableService implements Service {
             }
             message = Message.parse(rawMessage);
             message = serve(message);
-            client.send(message.toString());
+            client.send(MessageFormatter.format(message));
         }
     }
 

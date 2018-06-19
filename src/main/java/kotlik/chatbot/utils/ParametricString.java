@@ -5,7 +5,6 @@ import org.jetbrains.annotations.NotNull;
 import java.util.HashMap;
 import java.util.Map;
 
-
 public class ParametricString {
     private final HashMap<String, Object> params = new HashMap<>();
     private String buffer;

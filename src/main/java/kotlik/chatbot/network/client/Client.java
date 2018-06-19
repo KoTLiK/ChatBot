@@ -5,7 +5,6 @@ import org.jetbrains.annotations.Nullable;
 
 import java.io.IOException;
 
-
 public interface Client extends AutoCloseable {
 
     void start() throws IOException;

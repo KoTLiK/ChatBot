@@ -5,7 +5,6 @@ import org.jetbrains.annotations.NotNull;
 
 import java.nio.ByteBuffer;
 
-
 public interface Protocol {
 
     public IrcProtocol clear();

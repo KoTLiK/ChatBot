@@ -8,7 +8,6 @@ import kotlik.chatbot.message.MessageBuilder;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 
-
 @Commander
 final public class CommandController {
 

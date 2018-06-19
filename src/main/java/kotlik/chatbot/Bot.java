@@ -4,7 +4,6 @@ import kotlik.chatbot.controller.Service;
 import kotlik.chatbot.utils.Environment;
 import kotlik.chatbot.utils.StreamHandler;
 
-
 public class Bot {
     private static Service service = null;
 

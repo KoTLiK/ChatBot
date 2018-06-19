@@ -8,7 +8,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.Scanner;
 
-
 public class StreamHandler {
     private final static Logger LOGGER = LoggerFactory.getLogger(StreamHandler.class);
     private final Scanner input;

@@ -8,7 +8,6 @@ import java.nio.ByteBuffer;
 import java.nio.charset.StandardCharsets;
 import java.util.LinkedList;
 
-
 final public class IrcProtocol implements Protocol {
     private final StringBuilder container = new StringBuilder();
     private final LinkedList<String> messages = new LinkedList<>();

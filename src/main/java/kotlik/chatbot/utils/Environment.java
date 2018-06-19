@@ -8,7 +8,6 @@ import org.slf4j.LoggerFactory;
 import java.io.IOException;
 import java.util.Properties;
 
-
 public class Environment {
     private final static Logger LOGGER = LoggerFactory.getLogger(Environment.class.getName());
     private final static String PROPERTY_FILE_NAME = "bot.properties";

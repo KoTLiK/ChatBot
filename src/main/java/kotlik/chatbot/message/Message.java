@@ -1,5 +1,7 @@
 package kotlik.chatbot.message;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import kotlik.chatbot.utils.Environment;
 import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
@@ -9,7 +11,6 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-
 
 public class Message {
     public final static String DELIMITER = "\r\n";
@@ -64,19 +65,12 @@ public class Message {
 
     @Override
     public String toString() {
-        if (command.equals(Command.UNKNOWN))
-            return "";
-
-        final StringBuilder builder = new StringBuilder();
-        builder.append(command);
-
-        for (String param : params)
-            builder.append(" ").append(param);
-
-        if (trailing != null)
-            builder.append(" :").append(trailing);
-
-        return builder.toString() + DELIMITER;
+        try {
+            return new ObjectMapper().writerWithDefaultPrettyPrinter().writeValueAsString(this);
+        } catch (JsonProcessingException e) {
+            LOGGER.warn("Unable to serialize message!", e);
+        }
+        return "{\n\t\"error:\" \"Unable to serialize message!\"}\n";
     }
 
     // TODO: move next 3 methods to extra parser class
