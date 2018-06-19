@@ -6,6 +6,7 @@ import kotlik.chatbot.message.Command;
 import kotlik.chatbot.message.Message;
 import kotlik.chatbot.message.MessageBuilder;
 import kotlik.chatbot.message.MessageFormatter;
+import kotlik.chatbot.message.MessageParser;
 import kotlik.chatbot.network.client.Client;
 import kotlik.chatbot.network.client.TcpClient;
 import kotlik.chatbot.utils.Environment;
@@ -64,7 +65,7 @@ public abstract class RunnableService implements Service {
                 // TODO handle 'End of stream' ???
                 break;
             }
-            message = Message.parse(rawMessage);
+            message = MessageParser.parse(rawMessage);
             message = serve(message);
             client.send(MessageFormatter.format(message));
         }

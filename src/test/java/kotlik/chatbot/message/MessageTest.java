@@ -77,8 +77,8 @@ public class MessageTest {
     public String inputStr;
 
     @Test
-    public void MessageParseTest() {
-        Message message = Message.parse(inputStr);
+    public void messageParseTest() {
+        Message message = MessageParser.parse(inputStr);
 
         Assert.assertNotNull(message);
         Assert.assertEquals(expectedMsg.getTags(), message.getTags());
@@ -88,5 +88,27 @@ public class MessageTest {
         Assert.assertEquals(expectedMsg.getCommand(), message.getCommand());
         Assert.assertEquals(expectedMsg.getParams(), message.getParams());
         Assert.assertEquals(expectedMsg.getTrailing(), message.getTrailing());
+    }
+
+    @Test
+    public void messageParseShorterRegexpTest() {
+        Message message = MessageParser.parseShorterRegexp(inputStr);
+
+        Assert.assertNotNull(message);
+        Assert.assertEquals(expectedMsg.getTags(), message.getTags());
+        Assert.assertEquals(expectedMsg.getNick(), message.getNick());
+        Assert.assertEquals(expectedMsg.getUser(), message.getUser());
+        Assert.assertEquals(expectedMsg.getHost(), message.getHost());
+        Assert.assertEquals(expectedMsg.getCommand(), message.getCommand());
+        Assert.assertEquals(expectedMsg.getParams(), message.getParams());
+        Assert.assertEquals(expectedMsg.getTrailing(), message.getTrailing());
+    }
+
+    @Test
+    public void messageFormatTest() {
+        if (expectedMsg.getCommand().equals(Command.UNKNOWN)) return;
+
+        final String result = MessageFormatter.fullFormat(expectedMsg);
+        Assert.assertEquals(inputStr + Message.DELIMITER, result);
     }
 }

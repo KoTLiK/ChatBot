@@ -20,4 +20,34 @@ public class MessageFormatter {
 
         return builder.toString() + Message.DELIMITER;
     }
+
+    @NotNull
+    public static String fullFormat(@NotNull Message message) {
+        if (message.getCommand().equals(Command.UNKNOWN))
+            return "";
+
+        final StringBuilder builder = new StringBuilder();
+
+        if (!message.getTags().isEmpty()) {
+            builder.append("@");
+            for (String tag : message.getTags())
+                builder.append(tag).append(";");
+            builder.deleteCharAt(builder.lastIndexOf(";"));
+            builder.append(" ");
+        }
+
+        if (message.getNick() != null) {
+            builder.append(":").append(message.getNick());
+
+            if (message.getUser() != null)
+                builder.append("!").append(message.getUser());
+
+            if (message.getHost() != null)
+                builder.append("@").append(message.getHost());
+
+            builder.append(" ");
+        }
+
+        return builder.toString() + format(message);
+    }
 }
