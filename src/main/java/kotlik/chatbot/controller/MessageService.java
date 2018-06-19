@@ -1,6 +1,7 @@
 package kotlik.chatbot.controller;
 
 import kotlik.chatbot.message.Message;
+import kotlik.chatbot.message.MessageBuilder;
 import kotlik.chatbot.utils.Environment;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -24,16 +25,16 @@ public class MessageService extends RunnableService {
             client.start();
 
             // Login
-            client.send(Message.pass(userEnvironment.getValue("user.client.oauth.token")).toString());
-            client.send(Message.nick(userEnvironment.getValue("user.client.username")).toString());
+            client.send(MessageBuilder.pass(userEnvironment.getValue("user.client.oauth.token")).toString());
+            client.send(MessageBuilder.nick(userEnvironment.getValue("user.client.username")).toString());
 
             // Request Twitch capabilities
-            client.send(Message.capabilities("twitch.tv/membership").toString());
-            client.send(Message.capabilities("twitch.tv/tags").toString());
-            client.send(Message.capabilities("twitch.tv/commands").toString());
+            client.send(MessageBuilder.capabilities("twitch.tv/membership").toString());
+            client.send(MessageBuilder.capabilities("twitch.tv/tags").toString());
+            client.send(MessageBuilder.capabilities("twitch.tv/commands").toString());
 
             // Join channel
-            client.send(Message.join(userEnvironment.getValue("user.client.channel")).toString());
+            client.send(MessageBuilder.join(userEnvironment.getValue("user.client.channel")).toString());
 
             loop();
 

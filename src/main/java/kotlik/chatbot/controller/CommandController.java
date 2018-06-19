@@ -20,6 +20,8 @@ final public class CommandController {
 
     @TargetCommand(Command.PING)
     public Message ping(@NotNull Message message) {
-        return message.setCommand(Command.PONG);
+        return MessageBuilder.command(Command.PONG)
+                .withTrailing(message.getTrailing())
+                .build();
     }
 }

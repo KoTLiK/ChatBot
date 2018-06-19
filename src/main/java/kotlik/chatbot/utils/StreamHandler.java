@@ -57,7 +57,7 @@ public class StreamHandler {
                 }
             }
         } catch (InterruptedException | IOException e) {
-            LOGGER.error("Service thread problem!", e);
+            LOGGER.error("Service problem!", e);
         }
     }
 }

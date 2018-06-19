@@ -1,51 +1,95 @@
 package kotlik.chatbot.message;
 
+import kotlik.chatbot.utils.Environment;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.List;
-import java.util.stream.Collectors;
 
 
 public class MessageBuilder {
 
-    public static Message build(Command command, String params) {
-        final Message message = addParams(new Message(), params);
-        return message.setCommand(command);
+    private Command command;
+    private String[] params;
+    private String[] tags;
+    private String nick;
+    private String username;
+    private String host;
+    private String trailing;
+
+    @NotNull
+    public static MessageBuilder command(Command command) {
+        return new MessageBuilder(command);
     }
 
-    public static Message build(Command command, String params, String tags) {
-        final Message message = build(command, params);
-        return addTags(message, tags);
+    private MessageBuilder(Command command) {
+        this.command = command;
     }
 
-    public static Message build(Command command, String params, String tags, String nick) {
-        final Message message = build(command, params, tags);
-        return message.setNick(nick);
+    public MessageBuilder withParams(String... params) {
+        this.params = params;
+        return this;
     }
 
-    public static Message build(Command command, String params, String tags, String nick, String user, String host) {
-        final Message message = build(command, params, tags, nick);
-        return message.setUser(user).setHost(host);
+    public MessageBuilder withTags(String... tags) {
+        this.tags = tags;
+        return this;
     }
 
-    public static Message addParams(Message message, @NotNull String params) {
-        if (params.contains(":")) {
-            final int index = params.indexOf(":");
-            message.setTrailing(true, params.substring(index + 1));
-            params = params.substring(0, index);
-        }
-
-        List<String> middles = Arrays.asList(params.split("\\s+"));
-        return message.setParams(middles.stream()
-                                  .filter(middle -> middle.length() > 0)
-                                  .collect(Collectors.toList()));
+    public MessageBuilder withNick(String nick) {
+        this.nick = nick;
+        return this;
     }
 
-    public static Message addTags(Message message, final String tags) {
-        if (tags != null)
-            return message.setTags(new ArrayList<>(Arrays.asList(tags.split("[; ]"))));
-        else return message;
+    public MessageBuilder withUser(String username) {
+        this.username = username;
+        return this;
+    }
+
+    public MessageBuilder withHost(String host) {
+        this.host = host;
+        return this;
+    }
+
+    public MessageBuilder withTrailing(String trailing) {
+        this.trailing = trailing;
+        return this;
+    }
+
+    public Message build() {
+        return new Message(
+                tags == null ? new ArrayList<>() : Arrays.asList(tags),
+                nick,
+                username,
+                host,
+                command,
+                params == null ? new ArrayList<>() : Arrays.asList(params),
+                trailing
+        );
+    }
+
+    public static Message pass(final String token) {
+        return MessageBuilder.command(Command.PASS)
+                .withParams(Environment.get("bot.client.oauth.prefix") + token)
+                .build();
+    }
+
+    public static Message nick(final String username) {
+        return MessageBuilder.command(Command.NICK)
+                .withParams(username)
+                .build();
+    }
+
+    public static Message capabilities(final String capabilities) {
+        return MessageBuilder.command(Command.CAP)
+                .withParams("REQ")
+                .withTrailing(capabilities)
+                .build();
+    }
+
+    public static Message join(final String channel) {
+        return MessageBuilder.command(Command.JOIN)
+                .withParams("#" + channel)
+                .build();
     }
 }

@@ -6,14 +6,18 @@ import org.jetbrains.annotations.Nullable;
 import java.io.IOException;
 
 
-public interface Client {
+public interface Client extends AutoCloseable {
 
-    public void start() throws IOException;
+    void start() throws IOException;
 
-    public void stop() throws IOException;
+    void stop() throws IOException;
 
-    public void send(@NotNull final String message) throws IOException;
+    default void close() throws Exception {
+        stop();
+    }
+
+    void send(@NotNull final String message) throws IOException;
 
     @Nullable
-    public String receive() throws IOException;
+    String receive() throws IOException;
 }

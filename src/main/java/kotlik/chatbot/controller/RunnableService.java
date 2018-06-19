@@ -48,7 +48,11 @@ public abstract class RunnableService implements Service {
     @Override
     public void stop() throws IOException {
         this.stop = true;
-        client.send(MessageBuilder.build(Command.QUIT, ":I am shutting down, bye!").toString());
+        client.send(MessageBuilder.command(Command.QUIT)
+                .withTrailing("I am shutting down, bye!")
+                .build()
+                .toString()
+        );
     }
 
     protected void loop() throws IOException {
@@ -67,7 +71,7 @@ public abstract class RunnableService implements Service {
     }
 
     protected Message serve(@NotNull Message message) {
-        Object response = MessageBuilder.build(Command.UNKNOWN, "");
+        Object response = MessageBuilder.command(Command.UNKNOWN).build();
         try {
             final Method method = commandMethods.get(message.getCommand());
             if (method != null)

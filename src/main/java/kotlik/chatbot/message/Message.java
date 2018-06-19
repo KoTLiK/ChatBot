@@ -5,6 +5,7 @@ import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -22,9 +23,16 @@ public class Message {
     private Command command;
     private List<String> params;
     private String trailing;
-    private boolean colon = false;
 
-    public Message() {}
+    public Message(List<String> tags, String nick, String user, String host, Command command, List<String> params, String trailing) {
+        this.tags = tags;
+        this.nick = nick;
+        this.user = user;
+        this.host = host;
+        this.command = command;
+        this.params = params;
+        this.trailing = trailing;
+    }
 
     public List<String> getTags() {
         return tags;
@@ -54,47 +62,6 @@ public class Message {
         return trailing;
     }
 
-    public Message setTags(final List<String> tags) {
-        this.tags = tags;
-        return this;
-    }
-
-    public Message setNick(final String nick) {
-        this.nick = nick;
-        return this;
-    }
-
-    public Message setUser(final String user) {
-        this.user = user;
-        return this;
-    }
-
-    public Message setHost(final String host) {
-        this.host = host;
-        return this;
-    }
-
-    public Message setCommand(final Command command) {
-        this.command = command;
-        return this;
-    }
-
-    public Message setParams(final List<String> params) {
-        this.params = params;
-        return this;
-    }
-
-    public Message setTrailing(boolean colon, final String trailing) {
-        this.colon = colon;
-        this.trailing = trailing;
-        return this;
-    }
-
-    public Message setTrailing(final String trailing) {
-        setTrailing(true, trailing);
-        return this;
-    }
-
     @Override
     public String toString() {
         if (command.equals(Command.UNKNOWN))
@@ -106,43 +73,46 @@ public class Message {
         for (String param : params)
             builder.append(" ").append(param);
 
-        if (trailing != null) {
-            if (colon) builder.append(" :").append(trailing);
-            else builder.append(" ").append(trailing);
-        }
+        if (trailing != null)
+            builder.append(" :").append(trailing);
 
         return builder.toString() + DELIMITER;
     }
 
+    // TODO: move next 3 methods to extra parser class
+
     @NotNull
     public static Message parse(final String message) {
         final Matcher matcher = REGEX.matcher(message);
-        if (!matcher.find()) return MessageBuilder.build(Command.UNKNOWN, "");
+        if (!matcher.find()) return MessageBuilder.command(Command.UNKNOWN).build();
 
-        return MessageBuilder.build(Command.fromString(matcher.group("CMD")),
-                                    matcher.group("PARAMS"),
-                                    matcher.group("TAGS"),
-                                    matcher.group("NICK"),
-                                    matcher.group("USER"),
-                                    matcher.group("HOST"));
+        MessageBuilder builder = MessageBuilder.command(Command.fromString(matcher.group("CMD")));
+        addParams(builder, matcher.group("PARAMS"));
+        addTags(builder, matcher.group("TAGS"));
+        return builder
+                .withNick(matcher.group("NICK"))
+                .withUser(matcher.group("USER"))
+                .withHost(matcher.group("HOST"))
+                .build();
     }
 
-    public static Message pass(final String token) {
-        return MessageBuilder.build(Command.PASS, "")
-                       .setTrailing(false, Environment.get("bot.client.oauth.prefix") + token);
+    private static MessageBuilder addParams(@NotNull MessageBuilder builder, String paramsMessagePart) {
+        if (paramsMessagePart == null) return null;
+
+        if (paramsMessagePart.contains(":")) {
+            final int index = paramsMessagePart.indexOf(":");
+            builder.withTrailing(paramsMessagePart.substring(index + 1));
+            paramsMessagePart = paramsMessagePart.substring(0, index);
+        }
+
+        return builder.withParams(Arrays.stream(paramsMessagePart.split("\\s+"))
+                .filter(s -> !s.isEmpty())
+                .toArray(String[]::new));
     }
 
-    public static Message nick(final String username) {
-        return MessageBuilder.build(Command.NICK, "")
-                       .setTrailing(false, username);
-    }
+    private static MessageBuilder addTags(@NotNull MessageBuilder builder, final String tags) {
+        if (tags == null) return null;
 
-    public static Message capabilities(final String capabilities) {
-        return MessageBuilder.build(Command.CAP, "REQ")
-                       .setTrailing(capabilities);
-    }
-
-    public static Message join(final String channel) {
-        return MessageBuilder.build(Command.JOIN, "#" + channel);
+        return builder.withTags(tags.split("[; ]"));
     }
 }
