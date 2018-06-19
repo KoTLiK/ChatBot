@@ -2,64 +2,31 @@ package kotlik.chatbot;
 
 import kotlik.chatbot.controller.Service;
 import kotlik.chatbot.utils.Environment;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import java.io.IOException;
-import java.util.Scanner;
+import kotlik.chatbot.utils.StreamHandler;
 
 
 public class Bot {
-    private final static Logger LOGGER = LoggerFactory.getLogger(Bot.class);
+    private static Service service = null;
+
     public static void main(String[] args) {
-        final Service service = getService();
+        final Service service = getServiceInstance();
+        final StreamHandler cli = new StreamHandler(System.in);
 
-        Thread thread = new Thread(service);
-        thread.start();
-
-        final Scanner input = new Scanner(System.in);
-        String inputText;
-        try {
-            while (input.hasNext()) {
-                inputText = input.nextLine().toLowerCase();
-                LOGGER.info(inputText);
-                switch (inputText) {
-                    case "restart":
-                        service.stop();
-                    case "start":
-                        thread.join();
-                        thread = new Thread(service);
-                        thread.start();
-                        break;
-                    case "stop":
-                        service.stop();
-                        break;
-                    case "exit":
-                    case "quit":
-                        service.stop();
-                        thread.join();
-                        return;
-                    default: break;
-                }
-            }
-        } catch (InterruptedException | IOException e) {
-            LOGGER.error("Service thread problem!", e);
-        }
+        cli.bind(service);
+        cli.start();
     }
 
-    private static Class<?> getClassRunner() {
+    private static Service getServiceInstance() {
         try {
-            return Class.forName(Environment.get("bot.class.service.runner"));
+            if (service == null) {
+                final Class<?> serviceClass = Class.forName(Environment.get("bot.class.service.runner"));
+                service = (Service) serviceClass.newInstance();
+            }
         } catch (ClassNotFoundException e) {
             throw new RuntimeException("Service runner not found!", e);
-        }
-    }
-
-    private static Service getService() {
-        try {
-            return (Service) getClassRunner().newInstance();
         } catch (IllegalAccessException | InstantiationException e) {
             throw new RuntimeException("Unable to instantiate service!", e);
         }
+        return service;
     }
 }
