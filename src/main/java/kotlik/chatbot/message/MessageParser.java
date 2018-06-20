@@ -9,7 +9,6 @@ import java.util.regex.Pattern;
 
 public class MessageParser {
     private final static Pattern REGEX = Pattern.compile(Environment.get("bot.message.regexp"));
-    private final static Pattern REGEX_NO_TAGS = Pattern.compile(Environment.get("bot.message.no.tags.regexp"));
 
     public static Message parse(final String message) {
         final Matcher matcher = REGEX.matcher(message);
@@ -25,7 +24,9 @@ public class MessageParser {
                 .build();
     }
 
-    public static Message parseShorterRegexp(@NotNull String message) {
+    public static Message parseNoRegexp(@NotNull String message) {
+
+        // Twitch TAGS
         String rawTags = null;
         if (message.startsWith("@")) {
             final int index = message.indexOf(" ");
@@ -33,17 +34,28 @@ public class MessageParser {
             message = message.substring(index + 1);
         }
 
-        final Matcher matcher = REGEX_NO_TAGS.matcher(message);
-        if (!matcher.find()) return MessageBuilder.command(Command.UNKNOWN).build();
+        // IRC Prefix
+        String prefix = null;
+        if (message.startsWith(":")) {
+            final int index = message.indexOf(" ");
+            prefix = message.substring(1, index);
+            message = message.substring(index + 1);
+        }
 
-        MessageBuilder builder = MessageBuilder.command(Command.fromString(matcher.group("CMD")));
-        addParams(builder, matcher.group("PARAMS"));
+        // Command & Params
+        // TODO IRC Protocol says Params is at least SPACE character; Needs to be checked IRL
+        // TODO Then we do not have to worry about non-existence of the SPACE delimiter for the Command and Params
+        MessageBuilder builder;
+        if (message.contains(" ")) {
+            final int index = message.indexOf(" ");
+            builder = MessageBuilder.command(Command.fromString(message.substring(0, index)));
+            addParams(builder, message.substring(index + 1));
+        } else builder = MessageBuilder.command(Command.fromString(message));
+
         addTags(builder, rawTags);
-        return builder
-                .withNick(matcher.group("NICK"))
-                .withUser(matcher.group("USER"))
-                .withHost(matcher.group("HOST"))
-                .build();
+        addPrefix(builder, prefix);
+
+        return builder.build();
     }
 
     private static MessageBuilder addParams(MessageBuilder builder, String paramsMessagePart) {
@@ -66,5 +78,22 @@ public class MessageParser {
             return builder;
 
         return builder.withTags(tags.split("[; ]"));
+    }
+
+    private static MessageBuilder addPrefix(MessageBuilder builder, String prefix) {
+        // Parsing prefix -> Nick !User(optional) @Host(optional)
+        if (prefix != null) {
+            if (prefix.contains("!")) {
+                final int indexNick = prefix.indexOf("!");
+                builder.withNick(prefix.substring(0, indexNick));
+                prefix = prefix.substring(indexNick + 1);
+                if (prefix.contains("@")) {
+                    final int index = prefix.indexOf("@");
+                    builder.withUser(prefix.substring(0, index));
+                    builder.withHost(prefix.substring(index + 1));
+                }
+            } else builder.withNick(prefix);
+        }
+        return builder;
     }
 }

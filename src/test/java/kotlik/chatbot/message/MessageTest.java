@@ -91,8 +91,8 @@ public class MessageTest {
     }
 
     @Test
-    public void messageParseShorterRegexpTest() {
-        Message message = MessageParser.parseShorterRegexp(inputStr);
+    public void messageParseNoRegexpTest() { // TODO benchmark Regexp vs. NoRegexp
+        Message message = MessageParser.parseNoRegexp(inputStr);
 
         Assert.assertNotNull(message);
         Assert.assertEquals(expectedMsg.getTags(), message.getTags());
