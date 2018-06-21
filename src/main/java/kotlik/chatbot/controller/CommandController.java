@@ -23,4 +23,40 @@ final public class CommandController {
                 .withTrailing(message.getTrailing())
                 .build();
     }
+
+    @TargetCommand(Command.JOIN)
+    public Message join(Message message) {
+        return MessageBuilder.unknown();
+    }
+
+    @TargetCommand(Command.MODE)
+    public Message mode(Message message) {
+        return MessageBuilder.unknown();
+    }
+
+    // Might never happen
+    @TargetCommand(Command.NAMES)
+    public Message names(Message message) {
+        return MessageBuilder.unknown();
+    }
+
+    @TargetCommand(Command._353)
+    public Message names_353(Message message) {
+        return MessageBuilder.unknown();
+    }
+
+    @TargetCommand(Command._366)
+    public Message names_366(Message message) {
+        return MessageBuilder.unknown();
+    }
+
+    @TargetCommand(Command.PART)
+    public Message part(Message message) {
+        return MessageBuilder.unknown();
+    }
+
+    @TargetCommand(Command.QUIT)
+    public Message quit(Message message) {
+        return MessageBuilder.unknown();
+    }
 }

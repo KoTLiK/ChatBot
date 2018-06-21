@@ -90,4 +90,8 @@ public class MessageBuilder {
                 .withParams("#" + channel)
                 .build();
     }
+
+    public static Message unknown() {
+        return MessageBuilder.command(Command.UNKNOWN).build();
+    }
 }
