@@ -1,5 +1,6 @@
 package kotlik.chatbot.network.client;
 
+import kotlik.chatbot.message.Message;
 import kotlik.chatbot.network.protocol.IrcProtocol;
 import kotlik.chatbot.network.protocol.Protocol;
 import kotlik.chatbot.utils.ParametricString;
@@ -49,7 +50,7 @@ final public class TcpClient implements Client {
         while (buffer.hasRemaining()) {
             client.write(buffer);
         }
-        LOGGER.info("Sent: " + message);
+        LOGGER.info(">>> " + message.replace(Message.DELIMITER, ""));
     }
 
     @Nullable
@@ -74,7 +75,7 @@ final public class TcpClient implements Client {
         }
 
         final String message = protocol.popMessage();
-        LOGGER.info("Received: " + message);
+        LOGGER.info("<<< " + message);
         return message;
     }
 }
