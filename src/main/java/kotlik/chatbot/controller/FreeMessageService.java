@@ -11,7 +11,6 @@ import java.io.IOException;
 
 final public class FreeMessageService extends RunnableService {
     private final static Logger LOGGER = LoggerFactory.getLogger(MessageService.class);
-    private Environment userEnvironment;
 
     public FreeMessageService() {
         LOGGER.info("Service is prepared.");

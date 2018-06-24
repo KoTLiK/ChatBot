@@ -10,7 +10,6 @@ import java.io.IOException;
 
 public class MessageService extends RunnableService {
     private final static Logger LOGGER = LoggerFactory.getLogger(MessageService.class);
-    private Environment userEnvironment;
 
     public MessageService() {
         LOGGER.info("Service is prepared.");
