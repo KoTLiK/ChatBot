@@ -10,6 +10,7 @@ import org.jetbrains.annotations.NotNull;
 
 @Commander
 final public class CommandController {
+    private static final Message UNKNOWN_MESSAGE = MessageBuilder.unknown();
 
     @Contract(pure = true)
     @TargetCommand(Command.UNKNOWN)
@@ -26,37 +27,42 @@ final public class CommandController {
 
     @TargetCommand(Command.JOIN)
     public Message join(Message message) {
-        return MessageBuilder.unknown();
+        return UNKNOWN_MESSAGE;
     }
 
     @TargetCommand(Command.MODE)
     public Message mode(Message message) {
-        return MessageBuilder.unknown();
+        return UNKNOWN_MESSAGE;
     }
 
     // Might never happen
     @TargetCommand(Command.NAMES)
     public Message names(Message message) {
-        return MessageBuilder.unknown();
+        return UNKNOWN_MESSAGE;
     }
 
     @TargetCommand(Command._353)
     public Message names_353(Message message) {
-        return MessageBuilder.unknown();
+        return UNKNOWN_MESSAGE;
     }
 
     @TargetCommand(Command._366)
     public Message names_366(Message message) {
-        return MessageBuilder.unknown();
+        return UNKNOWN_MESSAGE;
     }
 
     @TargetCommand(Command.PART)
     public Message part(Message message) {
-        return MessageBuilder.unknown();
+        return UNKNOWN_MESSAGE;
     }
 
     @TargetCommand(Command.QUIT)
     public Message quit(Message message) {
-        return MessageBuilder.unknown();
+        return UNKNOWN_MESSAGE;
+    }
+
+    @TargetCommand(Command.CAP)
+    public Message cap(Message message) {
+        return UNKNOWN_MESSAGE;
     }
 }
