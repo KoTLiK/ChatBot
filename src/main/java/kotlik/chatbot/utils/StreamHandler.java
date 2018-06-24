@@ -39,7 +39,6 @@ public class StreamHandler {
                 switch (inputText) {
                     case "restart":
                         service.stop();
-                        service.restart();
                     case "start":
                         thread.join();
                         thread = new Thread(service);
