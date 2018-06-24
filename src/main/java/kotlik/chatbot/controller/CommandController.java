@@ -73,7 +73,7 @@ final public class CommandController {
         return UNKNOWN_MESSAGE;
     }
 
-@TargetCommand(Command.CLEARCHAT)
+    @TargetCommand(Command.CLEARCHAT)
     public Message clearChat(Message message) {
         return UNKNOWN_MESSAGE;
     }
