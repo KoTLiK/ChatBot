@@ -25,7 +25,6 @@ public abstract class RunnableService implements Service {
     protected final Client client;
     protected boolean stop;
     protected final Map<Command, Method> commandMethods = new HashMap<>();
-    protected Environment userEnvironment;
 
     public RunnableService() {
         this.client = new TcpClient(Environment.get("bot.twitch.url"),
@@ -55,7 +54,6 @@ public abstract class RunnableService implements Service {
                         .build()
                 )
         );
-        userEnvironment = null;
     }
 
     protected void loop() throws IOException {

@@ -19,7 +19,7 @@ final public class FreeMessageService extends RunnableService {
     @Override
     public void run() {
         stop = false;
-        userEnvironment = new Environment("user.properties");
+        Environment userEnvironment = new Environment("user.properties");
         LOGGER.info("Service is running.");
         try {
             client.start();
