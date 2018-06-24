@@ -11,6 +11,7 @@ import java.io.IOException;
 
 final public class FreeMessageService extends RunnableService {
     private final static Logger LOGGER = LoggerFactory.getLogger(MessageService.class);
+    private Environment userEnvironment;
 
     public FreeMessageService() {
         LOGGER.info("Service is prepared.");
@@ -19,7 +20,7 @@ final public class FreeMessageService extends RunnableService {
     @Override
     public void run() {
         stop = false;
-        Environment userEnvironment = new Environment("user.properties");
+        userEnvironment = new Environment("user.properties");
         LOGGER.info("Service is running.");
         try {
             client.start();
@@ -38,6 +39,11 @@ final public class FreeMessageService extends RunnableService {
             LOGGER.error("Network IO error!", e);
         }
         LOGGER.info("Service has been stopped.");
+    }
+
+    @Override
+    public void restart() {
+        userEnvironment = new Environment("user.properties");
     }
 }
 
