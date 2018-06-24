@@ -10,16 +10,16 @@ import java.util.List;
 public class Message {
     public final static String DELIMITER = "\r\n";
     private final static Logger LOGGER = LoggerFactory.getLogger(Message.class);
+    private final String rawMessage;
+    private final List<String> tags;
+    private final String nick;
+    private final String user;
+    private final String host;
+    private final Command command;
+    private final List<String> params;
+    private final String trailing;
 
-    private List<String> tags;
-    private String nick;
-    private String user;
-    private String host;
-    private Command command;
-    private List<String> params;
-    private String trailing;
-
-    public Message(List<String> tags, String nick, String user, String host, Command command, List<String> params, String trailing) {
+    public Message(List<String> tags, String nick, String user, String host, Command command, List<String> params, String trailing, String rawMessage) {
         this.tags = tags;
         this.nick = nick;
         this.user = user;
@@ -27,6 +27,7 @@ public class Message {
         this.command = command;
         this.params = params;
         this.trailing = trailing;
+        this.rawMessage = rawMessage;
     }
 
     public List<String> getTags() {
@@ -55,6 +56,10 @@ public class Message {
 
     public String getTrailing() {
         return trailing;
+    }
+
+    public String getRawMessage() {
+        return rawMessage;
     }
 
     @Override

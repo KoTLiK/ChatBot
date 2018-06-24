@@ -44,9 +44,4 @@ public class MessageService extends RunnableService {
         }
         LOGGER.info("Service has been stopped.");
     }
-
-    @Override
-    public void restart() {
-        userEnvironment = new Environment("user.properties");
-    }
 }
