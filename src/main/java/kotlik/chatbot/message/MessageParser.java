@@ -1,7 +1,6 @@
 package kotlik.chatbot.message;
 
 import kotlik.chatbot.utils.Environment;
-import org.jetbrains.annotations.NotNull;
 
 import java.util.Arrays;
 import java.util.regex.Matcher;
@@ -21,41 +20,43 @@ public class MessageParser {
                 .withNick(matcher.group("NICK"))
                 .withUser(matcher.group("USER"))
                 .withHost(matcher.group("HOST"))
+                .rawMessage(message)
                 .build();
     }
 
-    public static Message parseNoRegexp(@NotNull String message) {
+    public static Message parseNoRegexp(final String message) {
+        String tmpMsg = message;
 
         // Twitch TAGS
         String rawTags = null;
-        if (message.startsWith("@")) {
-            final int index = message.indexOf(" ");
-            rawTags = message.substring(1, index);
-            message = message.substring(index + 1);
+        if (tmpMsg.startsWith("@")) {
+            final int index = tmpMsg.indexOf(" ");
+            rawTags = tmpMsg.substring(1, index);
+            tmpMsg = tmpMsg.substring(index + 1);
         }
 
         // IRC Prefix
         String prefix = null;
-        if (message.startsWith(":")) {
-            final int index = message.indexOf(" ");
-            prefix = message.substring(1, index);
-            message = message.substring(index + 1);
+        if (tmpMsg.startsWith(":")) {
+            final int index = tmpMsg.indexOf(" ");
+            prefix = tmpMsg.substring(1, index);
+            tmpMsg = tmpMsg.substring(index + 1);
         }
 
         // Command & Params
         // TODO IRC Protocol says Params is at least SPACE character; Needs to be checked IRL
         // TODO Then we do not have to worry about non-existence of the SPACE delimiter for the Command and Params
         MessageBuilder builder;
-        if (message.contains(" ")) {
-            final int index = message.indexOf(" ");
-            builder = MessageBuilder.command(Command.fromString(message.substring(0, index)));
-            addParams(builder, message.substring(index + 1));
-        } else builder = MessageBuilder.command(Command.fromString(message));
+        if (tmpMsg.contains(" ")) {
+            final int index = tmpMsg.indexOf(" ");
+            builder = MessageBuilder.command(Command.fromString(tmpMsg.substring(0, index)));
+            addParams(builder, tmpMsg.substring(index + 1));
+        } else builder = MessageBuilder.command(Command.fromString(tmpMsg));
 
         addTags(builder, rawTags);
         addPrefix(builder, prefix);
 
-        return builder.build();
+        return builder.rawMessage(message).build();
     }
 
     private static MessageBuilder addParams(MessageBuilder builder, String paramsMessagePart) {

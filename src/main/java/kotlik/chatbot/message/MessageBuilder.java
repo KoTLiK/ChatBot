@@ -14,6 +14,7 @@ public class MessageBuilder {
     private String username;
     private String host;
     private String trailing;
+    private String rawMessage;
 
     @NotNull
     public static MessageBuilder command(Command command) {
@@ -54,6 +55,11 @@ public class MessageBuilder {
         return this;
     }
 
+    public MessageBuilder rawMessage(String rawMessage) {
+        this.rawMessage = rawMessage;
+        return this;
+    }
+
     public Message build() {
         return new Message(
                 tags == null ? new ArrayList<>() : Arrays.asList(tags),
@@ -62,7 +68,8 @@ public class MessageBuilder {
                 host,
                 command,
                 params == null ? new ArrayList<>() : Arrays.asList(params),
-                trailing
+                trailing,
+                rawMessage
         );
     }
 
@@ -89,5 +96,9 @@ public class MessageBuilder {
         return MessageBuilder.command(Command.JOIN)
                 .withParams("#" + channel)
                 .build();
+    }
+
+    public static Message unknown() {
+        return MessageBuilder.command(Command.UNKNOWN).build();
     }
 }

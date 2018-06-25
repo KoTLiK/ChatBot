@@ -38,7 +38,6 @@ public enum Command {
     _375,
     _376,
     _421,
-    _5XX,
 
 
     ;
