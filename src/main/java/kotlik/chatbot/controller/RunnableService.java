@@ -25,6 +25,7 @@ public abstract class RunnableService implements Service {
     protected final Client client;
     protected boolean stop;
     protected final Map<Command, Method> commandMethods = new HashMap<>();
+    private CommandController commanderInstance;
 
     public RunnableService() {
         this.client = new TcpClient(Environment.get("bot.twitch.url"),
@@ -43,6 +44,13 @@ public abstract class RunnableService implements Service {
                 }
             }
         } else throw new RuntimeException("Commander is not found.");
+
+        try {
+            commanderInstance = commander.newInstance();
+        } catch (InstantiationException | IllegalAccessException e) {
+            throw new RuntimeException("Unable to instantiate the Commander.", e);
+        }
+
         LOGGER.info("Initialization finished.");
     }
 
@@ -76,9 +84,9 @@ public abstract class RunnableService implements Service {
         try {
             final Method method = commandMethods.get(message.getCommand());
             if (method != null)
-                response = method.invoke(CommandController.class.newInstance(), message);
-        } catch (IllegalAccessException | InvocationTargetException | InstantiationException e) {
-            LOGGER.warn("Command invocation error!", e);
+                response = method.invoke(commanderInstance, message);
+        } catch (IllegalAccessException | InvocationTargetException e) {
+            LOGGER.warn("Command invocation failed!", e);
         }
         return (Message) response;
     }
