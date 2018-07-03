@@ -27,29 +27,35 @@ final public class CommandController {
 
     @TargetCommand(Command.JOIN)
     public Message join(Message message) {
+        // User joined a channel
         // <nick> JOIN #<channel>
         return UNKNOWN_MESSAGE;
     }
 
     @TargetCommand(Command.PRIVMSG)
     public Message privateMessage(Message message) {
+        // User sent a private message
+        // <nick> PRIVMSG #<channel> :<text>
         return UNKNOWN_MESSAGE;
     }
 
     @TargetCommand(Command.PART)
     public Message part(Message message) {
+        // User left a channel
         // <nick> PART #<channel>
         return UNKNOWN_MESSAGE;
     }
 
     @TargetCommand(Command.QUIT)
     public Message quit(Message message) {
+        // User disconnected from the server
         // TODO check syntax
         return UNKNOWN_MESSAGE;
     }
 
     @TargetCommand(Command.MODE)
     public Message mode(Message message) {
+        // Granting operator privileges
         // <nick> MODE #<channel> +/-o <user>
         // <nick> == 'jtv'
         return UNKNOWN_MESSAGE;
@@ -57,34 +63,43 @@ final public class CommandController {
 
     @TargetCommand(Command._353)
     public Message names_353(Message message) {
+        // List of users in channel
         // <host> 353 <nick> = #<channel> :<nicks>
         return UNKNOWN_MESSAGE;
     }
 
     @TargetCommand(Command._366)
     public Message names_366(Message message) {
+        // The end of list of users
         // <host> 366 <nick> #<channel> :End of /NAMES list
         return UNKNOWN_MESSAGE;
     }
 
     @TargetCommand(Command.CAP)
     public Message cap(Message message) {
+        // Twitch capabilities acknowledgement ?
         // <host> CAP * ACK :<capabilities>
         return UNKNOWN_MESSAGE;
     }
 
     @TargetCommand(Command.CLEARCHAT)
     public Message clearChat(Message message) {
+        // Temporary or permanent ban on a channel
+        // TODO twitch tags with more info
         return UNKNOWN_MESSAGE;
     }
 
     @TargetCommand(Command.HOSTTARGET)
     public Message hostTarget(Message message) {
+        // Host starts or stops a message
+        // Host start: <host> HOSTTARGET <current-channel> :<target-channel> [<number-of-viewers>|-]
+        // Host ends: <host> HOSTTARGET <current-channel> :- [<number-of-viewers>]
         return UNKNOWN_MESSAGE;
     }
 
     @TargetCommand(Command.NOTICE)
     public Message notice(Message message) {
+        // General server stuff TODO twitch tags -> additional info
         return UNKNOWN_MESSAGE;
     }
 
