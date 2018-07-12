@@ -1,6 +1,5 @@
 package kotlik.chatbot.controller;
 
-import kotlik.chatbot.annotations.Commander;
 import kotlik.chatbot.annotations.TargetCommand;
 import kotlik.chatbot.message.Command;
 import kotlik.chatbot.message.Message;
@@ -24,6 +23,7 @@ public abstract class RunnableService implements Service {
     private final static Logger LOGGER = LoggerFactory.getLogger(RunnableService.class);
     protected final Client client;
     protected boolean stop;
+    protected boolean reconnect;
     protected final Map<Command, Method> commandMethods = new HashMap<>();
     private CommandController commanderInstance;
 
@@ -31,19 +31,17 @@ public abstract class RunnableService implements Service {
         this.client = new TcpClient(Environment.get("bot.twitch.url"),
                 Integer.parseInt(Environment.get("bot.twitch.port")));
 
-        initialization();
+        this.initialization();
     }
 
     protected void initialization() {
         final Class<CommandController> commander = CommandController.class;
-        if (commander.isAnnotationPresent(Commander.class)) {
-            for (Method method : commander.getDeclaredMethods()) {
-                if (method.isAnnotationPresent(TargetCommand.class)) {
-                    final TargetCommand annotatedCommand = method.getAnnotation(TargetCommand.class);
-                    commandMethods.put(annotatedCommand.value(), method);
-                }
+        for (Method method : commander.getDeclaredMethods()) {
+            if (method.isAnnotationPresent(TargetCommand.class)) {
+                final TargetCommand annotatedCommand = method.getAnnotation(TargetCommand.class);
+                commandMethods.put(annotatedCommand.value(), method);
             }
-        } else throw new RuntimeException("Commander is not found.");
+        }
 
         try {
             commanderInstance = commander.newInstance();
@@ -56,7 +54,7 @@ public abstract class RunnableService implements Service {
 
     @Override
     public void stop() throws IOException {
-        this.stop = true;
+        stop = true;
         client.send(MessageFormatter.format(MessageBuilder.command(Command.QUIT)
                         .withTrailing("I am shutting down, bye!")
                         .build()
@@ -64,10 +62,15 @@ public abstract class RunnableService implements Service {
         );
     }
 
+    @Override
+    public void reconnect() {
+        reconnect = true;
+    }
+
     protected void loop() throws IOException {
         Message message;
         String rawMessage;
-        while (!stop) {
+        while (!stop && !reconnect) {
             rawMessage = client.receive();
             if (rawMessage == null) {
                 // TODO handle 'End of stream' ???

@@ -10,37 +10,49 @@ import java.io.IOException;
 
 public class MessageService extends RunnableService {
     private final static Logger LOGGER = LoggerFactory.getLogger(MessageService.class);
+    private Environment userEnvironment;
 
-    public MessageService() {
-        LOGGER.info("Service is prepared.");
+    public MessageService() {}
+
+    private void setup() {
+        this.stop = false;
+        this.reconnect = false;
+        this.userEnvironment = new Environment("user.properties");
     }
 
     @Override
     public void run() {
-        stop = false;
-        Environment userEnvironment = new Environment("user.properties");
-        LOGGER.info("Service is running.");
+        setup();
+        LOGGER.info("Service is prepared and running.");
         try {
-            client.start();
+            while (!reconnect) {
+                reconnect = false;
+                client.start();
 
-            // Login
-            client.send(MessageFormatter.format(MessageBuilder.pass(userEnvironment.getValue("user.client.oauth.token"))));
-            client.send(MessageFormatter.format(MessageBuilder.nick(userEnvironment.getValue("user.client.username"))));
+                // Login
+                client.send(MessageFormatter.format(MessageBuilder.pass(userEnvironment.getValue("user.client.oauth.token"))));
+                client.send(MessageFormatter.format(MessageBuilder.nick(userEnvironment.getValue("user.client.username"))));
 
-            // Request Twitch capabilities
-            client.send(MessageFormatter.format(MessageBuilder.capabilities("twitch.tv/membership")));
-            client.send(MessageFormatter.format(MessageBuilder.capabilities("twitch.tv/tags")));
-            client.send(MessageFormatter.format(MessageBuilder.capabilities("twitch.tv/commands")));
+                // Request Twitch capabilities
+                client.send(MessageFormatter.format(MessageBuilder.capabilities("twitch.tv/membership")));
+                client.send(MessageFormatter.format(MessageBuilder.capabilities("twitch.tv/tags")));
+                client.send(MessageFormatter.format(MessageBuilder.capabilities("twitch.tv/commands")));
 
-            // Join channel
-            client.send(MessageFormatter.format(MessageBuilder.join(userEnvironment.getValue("user.client.channel"))));
+                // Join channel
+                client.send(MessageFormatter.format(MessageBuilder.join(userEnvironment.getValue("user.client.channel"))));
 
-            loop();
+                loop();
 
-            client.stop();
+                client.stop();
+            }
         } catch (IOException e) {
             LOGGER.error("Network IO error!", e);
         }
         LOGGER.info("Service has been stopped.");
+    }
+
+    @Override
+    public void reloadUserConfig() {
+        userEnvironment = new Environment("user.properties");
     }
 }

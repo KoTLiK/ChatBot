@@ -11,33 +11,45 @@ import java.io.IOException;
 
 final public class FreeMessageService extends RunnableService {
     private final static Logger LOGGER = LoggerFactory.getLogger(MessageService.class);
+    private Environment userEnvironment;
 
-    public FreeMessageService() {
-        LOGGER.info("Service is prepared.");
+    public FreeMessageService() {}
+
+    private void setup() {
+        stop = false;
+        reconnect = false;
+        userEnvironment = new Environment("user.properties");
     }
 
     @Override
     public void run() {
-        stop = false;
-        Environment userEnvironment = new Environment("user.properties");
-        LOGGER.info("Service is running.");
+        setup();
+        LOGGER.info("Service is prepared and running.");
         try {
-            client.start();
+            while (!reconnect) {
+                reconnect = false;
+                client.start();
 
-            final String nickname = userEnvironment.getValue("user.client.username");
-            client.send(MessageFormatter.format(MessageBuilder.nick(nickname)));
-            client.send("USER " + nickname + " " + nickname + " " + nickname + " :" + nickname + Message.DELIMITER);
+                final String nickname = userEnvironment.getValue("user.client.username");
+                client.send(MessageFormatter.format(MessageBuilder.nick(nickname)));
+                client.send("USER " + nickname + " " + nickname + " " + nickname + " :" + nickname + Message.DELIMITER);
 
-            // Join channel
-            client.send(MessageFormatter.format(MessageBuilder.join(userEnvironment.getValue("user.client.channel"))));
+                // Join channel
+                client.send(MessageFormatter.format(MessageBuilder.join(userEnvironment.getValue("user.client.channel"))));
 
-            loop();
+                loop();
 
-            client.stop();
+                client.stop();
+            }
         } catch (IOException e) {
             LOGGER.error("Network IO error!", e);
         }
         LOGGER.info("Service has been stopped.");
+    }
+
+    @Override
+    public void reloadUserConfig() {
+        userEnvironment = new Environment("user.properties");
     }
 }
 

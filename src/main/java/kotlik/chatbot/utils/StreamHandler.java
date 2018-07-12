@@ -37,6 +37,12 @@ public class StreamHandler {
                 inputText = input.nextLine().toLowerCase();
                 LOGGER.info(inputText);
                 switch (inputText) {
+                    case "reload":
+                        service.reloadUserConfig();
+                    case "reconnect":
+                        service.reconnect();
+                        break;
+
                     case "restart":
                         service.stop();
                     case "start":
@@ -44,14 +50,17 @@ public class StreamHandler {
                         thread = new Thread(service);
                         thread.start();
                         break;
+
                     case "stop":
                         service.stop();
                         break;
+
                     case "exit":
                     case "quit":
                         service.stop();
                         thread.join();
                         return;
+
                     default: break;
                 }
             }
