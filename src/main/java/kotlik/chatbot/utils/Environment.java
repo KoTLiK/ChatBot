@@ -50,7 +50,6 @@ public class Environment {
         this.liveFilename = filename;
     }
 
-    //synchronized
     public boolean loadProperties() {
         final URL fileURL = Environment.class.getClassLoader().getResource(liveFilename);
         if (fileURL == null) {
