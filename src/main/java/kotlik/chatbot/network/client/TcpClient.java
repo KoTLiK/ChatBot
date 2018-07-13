@@ -19,7 +19,7 @@ final public class TcpClient implements Client {
     private final static Logger LOGGER = LoggerFactory.getLogger(TcpClient.class);
     public final static int BUFFER_SIZE = 2048;
 
-    private SocketChannel client;
+    private volatile SocketChannel client;
     private final String hostname;
     private final int port;
     private final Protocol protocol = new IrcProtocol();
@@ -44,7 +44,7 @@ final public class TcpClient implements Client {
     }
 
     @Override
-    public void send(@NotNull final String message) throws IOException {
+    public synchronized void send(@NotNull final String message) throws IOException {
         if (message.length() == 0) return;
         final ByteBuffer buffer = ByteBuffer.wrap(message.getBytes(Charset.forName("UTF-8")));
         while (buffer.hasRemaining()) {

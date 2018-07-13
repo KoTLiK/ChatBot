@@ -25,8 +25,8 @@ import java.util.concurrent.atomic.AtomicBoolean;
 public abstract class RunnableService implements Service {
     private final static Logger LOGGER = LoggerFactory.getLogger(RunnableService.class);
     protected final Client client;
-    protected AtomicBoolean stop;
-    protected AtomicBoolean reconnect;
+    protected final AtomicBoolean stop = new AtomicBoolean(false);
+    protected final AtomicBoolean reconnect = new AtomicBoolean(false);
     protected final Map<Command, Method> commandMethods = new HashMap<>();
     private CommandController commanderInstance;
 

@@ -18,8 +18,6 @@ public class MessageService extends RunnableService {
         stop.set(false);
         reconnect.set(false);
         userEnvironment = new Environment("user.properties");
-        if (!userEnvironment.reloadProperties())
-            throw new RuntimeException("Unable to load property file!");
     }
 
     @Override
