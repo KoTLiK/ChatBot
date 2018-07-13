@@ -36,9 +36,13 @@ public class StreamHandler {
             while (input.hasNext()) {
                 inputText = input.nextLine().toLowerCase();
                 LOGGER.info(inputText);
+                if (inputText.startsWith("channel:")) {
+                    service.changeChannel(inputText.substring(8));
+                    continue;
+                }
                 switch (inputText) {
-                    case "reload":
-                        service.reloadUserConfig();
+//                    case "reload":
+//                        service.reloadUserConfig();
                     case "reconnect":
                         service.reconnect();
                         break;

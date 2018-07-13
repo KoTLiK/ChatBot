@@ -48,11 +48,17 @@ final public class FreeMessageService extends RunnableService {
         LOGGER.info("Service has been stopped.");
     }
 
+    @Deprecated
     @Override
     public void reloadUserConfig() {
         final Environment environment = new Environment("user.properties");
         if (environment.reloadProperties())
             userEnvironment = environment;
+    }
+
+    @Override
+    public void changeChannel(String channel) {
+        userEnvironment.setProperty("user.client.channel", channel);
     }
 }
 

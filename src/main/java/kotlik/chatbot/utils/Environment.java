@@ -42,6 +42,10 @@ public class Environment {
         return getProperty(PROPERTIES, key);
     }
 
+    public static void setProperty(@NotNull final Properties properties, final String key, final String newValue) {
+        properties.setProperty(key, newValue); // TODO unit tests
+    }
+
     public static String getPropertyFromFile(final String filename, final String key) {
         return getProperty(getProperties(filename), key);
     }
@@ -82,5 +86,9 @@ public class Environment {
 
     public String getValue(final String key) {
         return getProperty(this.liveProperties, key);
+    }
+
+    public void setProperty(final String key, final String newValue) {
+        setProperty(this.liveProperties, key, newValue);
     }
 }

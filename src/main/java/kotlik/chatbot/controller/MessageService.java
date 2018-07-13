@@ -1,5 +1,6 @@
 package kotlik.chatbot.controller;
 
+import kotlik.chatbot.message.Command;
 import kotlik.chatbot.message.MessageBuilder;
 import kotlik.chatbot.message.MessageFormatter;
 import kotlik.chatbot.utils.Environment;
@@ -51,10 +52,23 @@ public class MessageService extends RunnableService {
         LOGGER.info("Service has been stopped.");
     }
 
+    @Deprecated
     @Override
     public void reloadUserConfig() {
         final Environment environment = new Environment("user.properties");
         if (environment.reloadProperties())
             userEnvironment = environment;
+    }
+
+    @Override
+    public void changeChannel(String channel) {
+        try {
+            client.send(MessageFormatter.format(MessageBuilder.command(Command.PART)
+                    .withParams("#" + userEnvironment.getValue("user.client.channel")).build()));
+            userEnvironment.setProperty("user.client.channel", channel);
+            client.send(MessageFormatter.format(MessageBuilder.join(channel)));
+        } catch (IOException e) {
+            LOGGER.error("Network IO error!", e);
+        }
     }
 }

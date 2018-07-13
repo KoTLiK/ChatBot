@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<configuration debug="true">
+<configuration>
     <property name="DEV_HOME" value="LOG" />
 
     <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
@@ -21,7 +21,7 @@
         </RollingPolicy>
 
         <TriggeringPolicy class="ch.qos.logback.core.rolling.SizeBasedTriggeringPolicy">
-            <MaxFileSize>10KB</MaxFileSize>
+            <MaxFileSize>10MB</MaxFileSize>
         </TriggeringPolicy>
     </appender>
 
