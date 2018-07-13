@@ -7,11 +7,6 @@ import org.junit.Test;
 public class ParametricStringTest {
     private final Environment ENV = new Environment("test.properties");
 
-    @Before
-    public void setup() {
-        ENV.loadProperties();
-    }
-
     @Test
     public void resolveParametricStringTest() {
         final String resultSingle = ParametricString.resolve(ENV.getValue("param.string.resolve.single"), "GLHF");

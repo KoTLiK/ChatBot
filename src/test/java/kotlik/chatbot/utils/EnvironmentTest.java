@@ -12,7 +12,7 @@ public class EnvironmentTest {
         final Environment environment = new Environment(PROPERTY_FILE_NAME);
 
         Assert.assertNotNull(environment);
-        Assert.assertTrue(environment.loadProperties());
+        Assert.assertTrue(environment.reloadProperties());
         Assert.assertEquals("oauth:", environment.getValue("bot.client.oauth.prefix"));
         Assert.assertEquals("6667", environment.getValue("bot.twitch.port"));
 

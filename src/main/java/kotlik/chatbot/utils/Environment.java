@@ -14,7 +14,7 @@ import java.util.Properties;
 import java.util.Scanner;
 
 public class Environment {
-    private final static Logger LOGGER = LoggerFactory.getLogger(Environment.class.getName());
+    private final static Logger LOGGER = LoggerFactory.getLogger(Environment.class);
     private final static String PROPERTY_FILE_NAME = "bot.properties";
     private final static Properties PROPERTIES = getProperties(PROPERTY_FILE_NAME);
 
@@ -48,9 +48,11 @@ public class Environment {
 
     public Environment(final String filename) {
         this.liveFilename = filename;
+        this.liveProperties = getProperties(filename);
     }
 
-    public boolean loadProperties() {
+    @Deprecated
+    public boolean reloadProperties() {
         final URL fileURL = Environment.class.getClassLoader().getResource(liveFilename);
         if (fileURL == null) {
             LOGGER.error(ParametricString.resolve("File URL for '{0}' not found!", liveFilename));

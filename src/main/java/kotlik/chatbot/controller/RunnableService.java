@@ -20,12 +20,13 @@ import java.lang.reflect.Method;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 public abstract class RunnableService implements Service {
     private final static Logger LOGGER = LoggerFactory.getLogger(RunnableService.class);
     protected final Client client;
-    protected boolean stop;
-    protected boolean reconnect;
+    protected AtomicBoolean stop;
+    protected AtomicBoolean reconnect;
     protected final Map<Command, Method> commandMethods = new HashMap<>();
     private CommandController commanderInstance;
 
@@ -59,7 +60,7 @@ public abstract class RunnableService implements Service {
 
     @Override
     public void stop() throws IOException {
-        stop = true;
+        stop.set(true);
         client.send(MessageFormatter.format(MessageBuilder.command(Command.QUIT)
                         .withTrailing("I am shutting down, bye!")
                         .build()
@@ -69,7 +70,7 @@ public abstract class RunnableService implements Service {
 
     @Override
     public void reconnect() throws IOException {
-        reconnect = true;
+        reconnect.set(true);
         client.send(MessageFormatter.format(MessageBuilder.command(Command.QUIT)
                         .withTrailing("I will reconnect, see you soon!")
                         .build()
@@ -80,7 +81,7 @@ public abstract class RunnableService implements Service {
     protected void loop() throws IOException {
         Message message;
         String rawMessage;
-        while (!stop && !reconnect) {
+        while (!stop.get() && !reconnect.get()) {
             rawMessage = client.receive();
             if (rawMessage == null) {
                 // TODO handle 'End of stream' ???

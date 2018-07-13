@@ -16,10 +16,10 @@ final public class FreeMessageService extends RunnableService {
     public FreeMessageService() {}
 
     private void setup() {
-        stop = false;
-        reconnect = false;
+        stop.set(false);
+        reconnect.set(false);
         userEnvironment = new Environment("user.properties");
-        if (!userEnvironment.loadProperties())
+        if (!userEnvironment.reloadProperties())
             throw new RuntimeException("Unable to load property file!");
     }
 
@@ -29,7 +29,6 @@ final public class FreeMessageService extends RunnableService {
         LOGGER.info("Service is prepared and running.");
         try {
             do {
-                reconnect = false;
                 client.start();
 
                 // Login
@@ -43,8 +42,8 @@ final public class FreeMessageService extends RunnableService {
                 loop();
 
                 client.stop();
-                if (stop) break;
-            } while (reconnect);
+                if (stop.get()) break;
+            } while (reconnect.getAndSet(false));
         } catch (IOException e) {
             LOGGER.error("Network IO error!", e);
         }
@@ -54,7 +53,7 @@ final public class FreeMessageService extends RunnableService {
     @Override
     public void reloadUserConfig() {
         final Environment environment = new Environment("user.properties");
-        if (environment.loadProperties())
+        if (environment.reloadProperties())
             userEnvironment = environment;
     }
 }
