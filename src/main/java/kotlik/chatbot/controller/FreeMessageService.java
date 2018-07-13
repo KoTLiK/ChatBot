@@ -19,6 +19,8 @@ final public class FreeMessageService extends RunnableService {
         stop = false;
         reconnect = false;
         userEnvironment = new Environment("user.properties");
+        if (!userEnvironment.loadProperties())
+            throw new RuntimeException("Unable to load property file!");
     }
 
     @Override
@@ -26,10 +28,11 @@ final public class FreeMessageService extends RunnableService {
         setup();
         LOGGER.info("Service is prepared and running.");
         try {
-            while (!reconnect) {
+            do {
                 reconnect = false;
                 client.start();
 
+                // Login
                 final String nickname = userEnvironment.getValue("user.client.username");
                 client.send(MessageFormatter.format(MessageBuilder.nick(nickname)));
                 client.send("USER " + nickname + " " + nickname + " " + nickname + " :" + nickname + Message.DELIMITER);
@@ -40,7 +43,8 @@ final public class FreeMessageService extends RunnableService {
                 loop();
 
                 client.stop();
-            }
+                if (stop) break;
+            } while (reconnect);
         } catch (IOException e) {
             LOGGER.error("Network IO error!", e);
         }
@@ -49,7 +53,9 @@ final public class FreeMessageService extends RunnableService {
 
     @Override
     public void reloadUserConfig() {
-        userEnvironment = new Environment("user.properties");
+        final Environment environment = new Environment("user.properties");
+        if (environment.loadProperties())
+            userEnvironment = environment;
     }
 }
 

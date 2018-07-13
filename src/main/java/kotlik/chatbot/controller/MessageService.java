@@ -15,9 +15,11 @@ public class MessageService extends RunnableService {
     public MessageService() {}
 
     private void setup() {
-        this.stop = false;
-        this.reconnect = false;
-        this.userEnvironment = new Environment("user.properties");
+        stop = false;
+        reconnect = false;
+        userEnvironment = new Environment("user.properties");
+        if (!userEnvironment.loadProperties())
+            throw new RuntimeException("Unable to load property file!");
     }
 
     @Override
@@ -25,7 +27,7 @@ public class MessageService extends RunnableService {
         setup();
         LOGGER.info("Service is prepared and running.");
         try {
-            while (!reconnect) {
+            do {
                 reconnect = false;
                 client.start();
 
@@ -44,7 +46,8 @@ public class MessageService extends RunnableService {
                 loop();
 
                 client.stop();
-            }
+                if (stop) break;
+            } while (reconnect);
         } catch (IOException e) {
             LOGGER.error("Network IO error!", e);
         }
@@ -53,6 +56,8 @@ public class MessageService extends RunnableService {
 
     @Override
     public void reloadUserConfig() {
-        userEnvironment = new Environment("user.properties");
+        final Environment environment = new Environment("user.properties");
+        if (environment.loadProperties())
+            userEnvironment = environment;
     }
 }

@@ -10,6 +10,7 @@ import kotlik.chatbot.network.client.Client;
 import kotlik.chatbot.network.client.TcpClient;
 import kotlik.chatbot.utils.Environment;
 import org.jetbrains.annotations.NotNull;
+import org.reflections.Reflections;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -18,6 +19,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Set;
 
 public abstract class RunnableService implements Service {
     private final static Logger LOGGER = LoggerFactory.getLogger(RunnableService.class);
@@ -35,6 +37,9 @@ public abstract class RunnableService implements Service {
     }
 
     protected void initialization() {
+//        final Reflections reflections = new Reflections("kotlik.chatbot.controller");
+//        final Set<Class<?>> classes = reflections.getTypesAnnotatedWith(Commander.class);
+
         final Class<CommandController> commander = CommandController.class;
         for (Method method : commander.getDeclaredMethods()) {
             if (method.isAnnotationPresent(TargetCommand.class)) {
@@ -63,8 +68,13 @@ public abstract class RunnableService implements Service {
     }
 
     @Override
-    public void reconnect() {
+    public void reconnect() throws IOException {
         reconnect = true;
+        client.send(MessageFormatter.format(MessageBuilder.command(Command.QUIT)
+                        .withTrailing("I will reconnect, see you soon!")
+                        .build()
+                )
+        );
     }
 
     protected void loop() throws IOException {
