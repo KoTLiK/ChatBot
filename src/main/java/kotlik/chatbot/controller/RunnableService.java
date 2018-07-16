@@ -24,11 +24,12 @@ import java.util.concurrent.atomic.AtomicBoolean;
 
 public abstract class RunnableService implements Service {
     private final static Logger LOGGER = LoggerFactory.getLogger(RunnableService.class);
-    protected final Client client;
-    protected final AtomicBoolean stop = new AtomicBoolean(false);
-    protected final AtomicBoolean reconnect = new AtomicBoolean(false);
-    protected final Map<Command, Method> commandMethods = new HashMap<>();
     private CommandController commanderInstance;
+    protected final Client client;
+    private final AtomicBoolean stop = new AtomicBoolean(false);
+    private final AtomicBoolean reconnect = new AtomicBoolean(false);
+    private final Map<Command, Method> commandMethods = new HashMap<>();
+    protected Environment userEnvironment;
 
     public RunnableService() {
         this.client = new TcpClient(Environment.get("bot.twitch.url"),
@@ -58,24 +59,28 @@ public abstract class RunnableService implements Service {
         LOGGER.info("Initialization finished.");
     }
 
-    @Override
-    public void stop() throws IOException {
-        stop.set(true);
-        client.send(MessageFormatter.format(MessageBuilder.command(Command.QUIT)
-                        .withTrailing("I am shutting down, bye!")
-                        .build()
-                )
-        );
+    private void setup() {
+        stop.set(false);
+        reconnect.set(false);
+        userEnvironment = new Environment("user.properties");
     }
 
     @Override
-    public void reconnect() throws IOException {
-        reconnect.set(true);
-        client.send(MessageFormatter.format(MessageBuilder.command(Command.QUIT)
-                        .withTrailing("I will reconnect, see you soon!")
-                        .build()
-                )
-        );
+    public void run() {
+        setup();
+        LOGGER.info("Service is prepared and running.");
+        try {
+            do {
+                client.start();
+                login();
+                loop();
+                client.stop();
+                if (stop.get()) break;
+            } while (reconnect.getAndSet(false));
+        } catch (IOException e) {
+            LOGGER.error("Network IO error!", e);
+        }
+        LOGGER.info("Service has been stopped.");
     }
 
     protected void loop() throws IOException {
@@ -103,5 +108,39 @@ public abstract class RunnableService implements Service {
             LOGGER.warn("Command invocation failed!", e);
         }
         return (Message) response;
+    }
+
+    protected void login() throws IOException {}
+
+    @Override
+    public void stop() throws IOException {
+        stop.set(true);
+        client.send(MessageFormatter.format(MessageBuilder.command(Command.QUIT)
+                        .withTrailing("I am shutting down, bye!")
+                        .build()
+                )
+        );
+    }
+
+    @Override
+    public void reconnect() throws IOException {
+        reconnect.set(true);
+        client.send(MessageFormatter.format(MessageBuilder.command(Command.QUIT)
+                        .withTrailing("I will reconnect, see you soon!")
+                        .build()
+                )
+        );
+    }
+
+    @Override
+    public void changeChannel(String channel) {
+        try {
+            client.send(MessageFormatter.format(MessageBuilder.command(Command.PART)
+                    .withParams("#" + userEnvironment.getValue("user.client.channel")).build()));
+            userEnvironment.setProperty("user.client.channel", channel);
+            client.send(MessageFormatter.format(MessageBuilder.join(channel)));
+        } catch (IOException e) {
+            LOGGER.error("Network IO error!", e);
+        }
     }
 }
