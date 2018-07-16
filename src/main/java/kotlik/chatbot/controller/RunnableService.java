@@ -59,7 +59,7 @@ public abstract class RunnableService implements Service {
         LOGGER.info("Initialization finished.");
     }
 
-    private void setup() {
+    protected void setup() {
         stop.set(false);
         reconnect.set(false);
         userEnvironment = new Environment("user.properties");
