@@ -5,13 +5,8 @@ import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.io.StringReader;
-import java.net.URL;
 import java.util.Properties;
-import java.util.Scanner;
 
 public class Environment {
     private final static Logger LOGGER = LoggerFactory.getLogger(Environment.class);
