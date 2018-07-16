@@ -133,14 +133,10 @@ public abstract class RunnableService implements Service {
     }
 
     @Override
-    public void changeChannel(String channel) {
-        try {
-            client.send(MessageFormatter.format(MessageBuilder.command(Command.PART)
-                    .withParams("#" + userEnvironment.getValue("user.client.channel")).build()));
-            userEnvironment.setProperty("user.client.channel", channel);
-            client.send(MessageFormatter.format(MessageBuilder.join(channel)));
-        } catch (IOException e) {
-            LOGGER.error("Network IO error!", e);
-        }
+    public void changeChannel(String channel) throws IOException {
+        client.send(MessageFormatter.format(MessageBuilder.command(Command.PART)
+                .withParams("#" + userEnvironment.getValue("user.client.channel")).build()));
+        userEnvironment.setProperty("user.client.channel", channel);
+        client.send(MessageFormatter.format(MessageBuilder.join(channel)));
     }
 }
