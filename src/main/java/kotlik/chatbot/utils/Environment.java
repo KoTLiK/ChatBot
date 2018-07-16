@@ -55,35 +55,6 @@ public class Environment {
         this.liveProperties = getProperties(filename);
     }
 
-    @Deprecated
-    public boolean reloadProperties() {
-        final URL fileURL = Environment.class.getClassLoader().getResource(liveFilename);
-        if (fileURL == null) {
-            LOGGER.error(ParametricString.resolve("File URL for '{0}' not found!", liveFilename));
-            return false;
-        }
-
-        final File file = new File(fileURL.getFile());
-        final StringBuilder content = new StringBuilder();
-
-        try (final Scanner scanner = new Scanner(file)) {
-            while (scanner.hasNextLine())
-                content.append(scanner.nextLine()).append("\n");
-
-            liveProperties = new Properties();
-            liveProperties.load(new StringReader(content.toString()));
-        } catch (FileNotFoundException e) {
-            LOGGER.error(ParametricString.resolve("Property file '{0}' not found!", liveFilename), e);
-            return false;
-        } catch (IOException e) {
-            LOGGER.error(ParametricString.resolve("Unable to load property file '{0}'!", liveFilename), e);
-            return false;
-        }
-
-        LOGGER.info("Properties successfully loaded.");
-        return true;
-    }
-
     public String getValue(final String key) {
         return getProperty(this.liveProperties, key);
     }
