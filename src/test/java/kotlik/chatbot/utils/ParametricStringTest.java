@@ -1,10 +1,11 @@
 package kotlik.chatbot.utils;
 
 import org.junit.Assert;
+import org.junit.Before;
 import org.junit.Test;
 
 public class ParametricStringTest {
-    private final static Environment ENV = new Environment("test.properties");
+    private final Environment ENV = new Environment("test.properties");
 
     @Test
     public void resolveParametricStringTest() {

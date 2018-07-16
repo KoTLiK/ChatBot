@@ -8,14 +8,10 @@ public class Bot {
     private static Service service = null;
 
     public static void main(String[] args) {
-        final Service service = getServiceInstance();
-        final StreamHandler cli = new StreamHandler(System.in);
-
-        cli.bind(service);
-        cli.start();
+        new StreamHandler(System.in).start();
     }
 
-    private static Service getServiceInstance() {
+    public static Service getServiceInstance() {
         try {
             if (service == null) {
                 final Class<?> serviceClass = Class.forName(Environment.get("bot.class.service.runner"));
