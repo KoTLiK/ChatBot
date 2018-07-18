@@ -45,7 +45,7 @@ final public class TcpClient implements Client {
 
     @Override
     public synchronized void send(@NotNull final String message) throws IOException {
-        if (message.length() == 0) return;
+        if (message.length() == 0 || !client.isConnected()) return;
         final ByteBuffer buffer = ByteBuffer.wrap(message.getBytes(Charset.forName("UTF-8")));
         while (buffer.hasRemaining()) {
             client.write(buffer);

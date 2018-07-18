@@ -1,13 +1,19 @@
 package kotlik.chatbot.controller;
 
+import kotlik.chatbot.Bot;
 import kotlik.chatbot.annotations.TargetCommand;
 import kotlik.chatbot.message.Command;
 import kotlik.chatbot.message.Message;
 import kotlik.chatbot.message.MessageBuilder;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import java.io.IOException;
 
 final public class CommandController {
+    private final static Logger LOGGER = LoggerFactory.getLogger(CommandController.class);
     private static final Message UNKNOWN_MESSAGE = MessageBuilder.unknown();
 
     @Contract(pure = true)
@@ -103,6 +109,12 @@ final public class CommandController {
 
     @TargetCommand(Command.RECONNECT)
     public Message reconnect(Message message) {
+        try {
+            LOGGER.info("Reconnecting...");
+            Bot.getServiceInstance().reconnect();
+        } catch (IOException e) {
+            LOGGER.warn("Unable to reconnect!", e);
+        }
         return UNKNOWN_MESSAGE;
     }
 
