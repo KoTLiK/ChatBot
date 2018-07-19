@@ -34,6 +34,10 @@ public class Message {
         return tags;
     }
 
+    public String getTag(int index) {
+        return tags.get(index);
+    }
+
     public String getNick() {
         return nick;
     }
@@ -52,6 +56,10 @@ public class Message {
 
     public List<String> getParams() {
         return params;
+    }
+
+    public String getParam(int index) {
+        return params.get(index);
     }
 
     public String getTrailing() {

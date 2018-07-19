@@ -50,7 +50,7 @@ final public class TcpClient implements Client {
         while (buffer.hasRemaining()) {
             client.write(buffer);
         }
-        LOGGER.info(">>> " + message.replace(Message.DELIMITER, ""));
+        LOGGER.debug(">>> " + message.replace(Message.DELIMITER, ""));
     }
 
     @Nullable
@@ -75,7 +75,7 @@ final public class TcpClient implements Client {
         }
 
         final String message = protocol.popMessage();
-        LOGGER.info("<<< " + message);
+        LOGGER.debug("<<< " + message);
         return message;
     }
 }
