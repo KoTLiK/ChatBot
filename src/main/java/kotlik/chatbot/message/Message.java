@@ -6,12 +6,13 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.List;
+import java.util.Map;
 
 public class Message {
     public final static String DELIMITER = "\r\n";
     private final static Logger LOGGER = LoggerFactory.getLogger(Message.class);
     private final String rawMessage;
-    private final List<String> tags;
+    private final Map<String, String[]> tags;
     private final String nick;
     private final String user;
     private final String host;
@@ -19,7 +20,7 @@ public class Message {
     private final List<String> params;
     private final String trailing;
 
-    public Message(List<String> tags, String nick, String user, String host, Command command, List<String> params, String trailing, String rawMessage) {
+    public Message(Map<String, String[]> tags, String nick, String user, String host, Command command, List<String> params, String trailing, String rawMessage) {
         this.tags = tags;
         this.nick = nick;
         this.user = user;
@@ -30,12 +31,12 @@ public class Message {
         this.rawMessage = rawMessage;
     }
 
-    public List<String> getTags() {
+    public Map<String, String[]> getTags() {
         return tags;
     }
 
-    public String getTag(int index) {
-        return tags.get(index);
+    public String[] getTag(String key) {
+        return tags.get(key);
     }
 
     public String getNick() {

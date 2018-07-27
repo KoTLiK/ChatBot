@@ -5,11 +5,13 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Map;
 
 public class MessageBuilder {
     private Command command;
     private String[] params;
-    private String[] tags;
+    private Map<String, String[]> tags;
     private String nick;
     private String username;
     private String host;
@@ -30,8 +32,13 @@ public class MessageBuilder {
         return this;
     }
 
-    public MessageBuilder withTags(String... tags) {
+    public MessageBuilder withTags(Map<String, String[]> tags) {
         this.tags = tags;
+        return this;
+    }
+
+    public MessageBuilder withTags(String tags) {
+        MessageParser.addTags(this, tags);
         return this;
     }
 
@@ -62,7 +69,7 @@ public class MessageBuilder {
 
     public Message build() {
         return new Message(
-                tags == null ? new ArrayList<>() : Arrays.asList(tags),
+                tags == null ? new HashMap<>() : tags,
                 nick,
                 username,
                 host,

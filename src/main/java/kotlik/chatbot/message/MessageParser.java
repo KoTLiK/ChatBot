@@ -3,6 +3,8 @@ package kotlik.chatbot.message;
 import kotlik.chatbot.utils.Environment;
 
 import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -74,11 +76,17 @@ public class MessageParser {
                 .toArray(String[]::new));
     }
 
-    private static MessageBuilder addTags(MessageBuilder builder, final String tags) {
+    public static MessageBuilder addTags(MessageBuilder builder, final String tags) {
         if (tags == null)
             return builder;
 
-        return builder.withTags(tags.split("[; ]"));
+        final Map<String, String[]> tagMap = new HashMap<>();
+        for (String tag : tags.split("[; ]")) {
+            final String[] parts = tag.split("=");
+            tagMap.put(parts[0], parts[1].split(","));
+        }
+
+        return builder.withTags(tagMap);
     }
 
     private static MessageBuilder addPrefix(MessageBuilder builder, String prefix) {

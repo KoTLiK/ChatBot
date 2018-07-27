@@ -10,6 +10,7 @@ import org.junit.runners.Parameterized.Parameters;
 
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Map;
 
 @RunWith(Parameterized.class)
 public class MessageTest {
@@ -59,7 +60,7 @@ public class MessageTest {
                     "@ban-reason=Follow\\sthe\\srules :tmi.twitch.tv CLEARCHAT #dallas :ronni"},
                 {MessageBuilder.command(Command.ROOMSTATE)
                         .withParams("#dallas")
-                        .withTags("broadcaster-lang=en", "r9k=0", "slow=0", "subs-only=0")
+                        .withTags("broadcaster-lang=en;r9k=0;slow=0;subs-only=0")
                         .withNick("tmi.twitch.tv")
                         .build(),
                     "@broadcaster-lang=en;r9k=0;slow=0;subs-only=0 :tmi.twitch.tv ROOMSTATE #dallas"},
@@ -81,7 +82,7 @@ public class MessageTest {
         Message message = MessageParser.parse(inputStr);
 
         Assert.assertNotNull(message);
-        Assert.assertEquals(expectedMsg.getTags(), message.getTags());
+        Assert.assertTrue(mapEquals(expectedMsg.getTags(), message.getTags()));
         Assert.assertEquals(expectedMsg.getNick(), message.getNick());
         Assert.assertEquals(expectedMsg.getUser(), message.getUser());
         Assert.assertEquals(expectedMsg.getHost(), message.getHost());
@@ -95,7 +96,7 @@ public class MessageTest {
         Message message = MessageParser.parseNoRegexp(inputStr);
 
         Assert.assertNotNull(message);
-        Assert.assertEquals(expectedMsg.getTags(), message.getTags());
+        Assert.assertTrue(mapEquals(expectedMsg.getTags(), message.getTags()));
         Assert.assertEquals(expectedMsg.getNick(), message.getNick());
         Assert.assertEquals(expectedMsg.getUser(), message.getUser());
         Assert.assertEquals(expectedMsg.getHost(), message.getHost());
@@ -110,5 +111,15 @@ public class MessageTest {
 
         final String result = MessageFormatter.fullFormat(expectedMsg);
         Assert.assertEquals(inputStr + Message.DELIMITER, result);
+    }
+
+    private static boolean mapEquals(@NotNull Map<String, String[]> expected, @NotNull Map<String, String[]> actual) {
+        if (!expected.keySet().equals(actual.keySet()))
+            return false;
+        for (Map.Entry<String, String[]> item : expected.entrySet()) {
+            if (!Arrays.equals(actual.get(item.getKey()), item.getValue()))
+                return false;
+        }
+        return true;
     }
 }
