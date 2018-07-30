@@ -13,8 +13,8 @@ import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 
-final public class CommandController {
-    private final static Logger LOGGER = LoggerFactory.getLogger(CommandController.class);
+final public class MainCommandController {
+    private final static Logger LOGGER = LoggerFactory.getLogger(MainCommandController.class);
     private static final Message UNKNOWN_MESSAGE = MessageBuilder.unknown();
 
     @Contract(pure = true)

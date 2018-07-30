@@ -24,7 +24,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 
 public abstract class RunnableService implements Service {
     private final static Logger LOGGER = LoggerFactory.getLogger(RunnableService.class);
-    private CommandController commanderInstance;
+    private MainCommandController commanderInstance;
     protected final Client client;
     private final AtomicBoolean stop = new AtomicBoolean(false);
     private final AtomicBoolean reconnect = new AtomicBoolean(false);
@@ -42,7 +42,7 @@ public abstract class RunnableService implements Service {
 //        final Reflections reflections = new Reflections("kotlik.chatbot.controller");
 //        final Set<Class<?>> classes = reflections.getTypesAnnotatedWith(Commander.class);
 
-        final Class<CommandController> commander = CommandController.class;
+        final Class<MainCommandController> commander = MainCommandController.class;
         for (Method method : commander.getDeclaredMethods()) {
             if (method.isAnnotationPresent(TargetCommand.class)) {
                 final TargetCommand annotatedCommand = method.getAnnotation(TargetCommand.class);
